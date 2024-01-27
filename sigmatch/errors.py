@@ -3,3 +3,6 @@ class SignatureMismatchError(Exception):
 
 class IncorrectArgumentsOrderError(Exception):
     pass
+
+class SignatureNotFoundError(Exception):
+    pass

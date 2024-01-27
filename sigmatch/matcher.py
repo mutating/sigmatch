@@ -1,7 +1,7 @@
-from inspect import Signature, Parameter
-from typing import Callable, Tuple, List, Any, Union
+from inspect import signature, Signature, Parameter
+from typing import Callable, Tuple, List, Any, Union, Optional
 
-from sigmatch.errors import SignatureMismatchError, IncorrectArgumentsOrderError
+from sigmatch.errors import SignatureMismatchError, IncorrectArgumentsOrderError, SignatureNotFoundError
 
 
 class SignatureMatcher:
@@ -68,20 +68,64 @@ class SignatureMatcher:
                 raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
             return False
 
-        signature = Signature.from_callable(function)
-        parameters = list(signature.parameters.values())
-
-        result: Union[bool, int] = True
-        result *= self.prove_is_args(parameters)
-        result *= self.prove_is_kwargs(parameters)
-        result *= self.prove_number_of_position_args(parameters)
-        result *= self.prove_number_of_named_args(parameters)
-        result *= self.prove_names_of_named_args(parameters)
-        result = bool(result)
+        result = self.get_symbols_from_callable(function) == self.expected_signature
 
         if not result and raise_exception:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
+
+    def get_symbols_from_callable(self, function: Callable[..., Any]) -> List[str]:
+        if not callable(function):
+            raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
+
+        try:
+            function_signature: Optional[Signature] = signature(function)
+            parameters = list(function_signature.parameters.values())
+            symbols = self.convert_parameters_to_symbols(parameters)
+        except ValueError as e:
+            symbols = self.special_signature_search()
+            if symbols is None:
+                raise ValueError() from e
+
+        return symbols
+
+    def convert_parameters_to_symbols(self, parameters: List[Parameter]) -> List[str]:
+        result = []
+
+        for parameter in parameters:
+            if parameter.kind == Parameter.POSITIONAL_ONLY:
+                if parameter.default == Parameter.empty:
+                    result.append('.')
+                else:
+                    result.append('?')
+
+            elif parameter.kind == Parameter.POSITIONAL_OR_KEYWORD:
+                if parameter.default == Parameter.empty:
+                    result.append('.')
+                else:
+                    result.append(parameter.name)
+
+            elif parameter.kind == Parameter.KEYWORD_ONLY:
+                result.append(parameter.name)
+
+            elif parameter.kind == Parameter.VAR_POSITIONAL:
+                result.append('*')
+
+            elif parameter.kind == Parameter.VAR_KEYWORD:
+                result.append('**')
+
+        return result
+
+    def special_signature_search(self, function: Callable[..., Any]) -> Optional[List[str]]:
+        if function is next:
+            return ['.', '?']
+        elif function is anext:
+            return ['.', '?']
+        elif function is bool:
+            return ['?']
+
+        return None
+
 
     def convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
         result = []
@@ -102,13 +146,18 @@ class SignatureMatcher:
         met_name = False
         met_star = False
         met_double_star = False
+        met_question_mark = False
         all_met_names = set()
 
         for item in expected_signature:
-            if not item.isidentifier() and item not in ('.', '*', '**'):
-                raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{item}".')
+            if not item.isidentifier() and item not in ('.', '*', '**', '?'):
+                raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "{item}".')
 
             if item == '.':
+                if met_name or met_star or met_double_star or met_question_mark:
+                    raise IncorrectArgumentsOrderError('Positional arguments must be specified first.')
+
+            elif item == '?':
                 if met_name or met_star or met_double_star:
                     raise IncorrectArgumentsOrderError('Positional arguments must be specified first.')
 
@@ -131,29 +180,3 @@ class SignatureMatcher:
                 if met_double_star:
                     raise IncorrectArgumentsOrderError('Unpacking of the same type (**kwargs in this case) can be specified no more than once.')
                 met_double_star = True
-
-    def prove_is_args(self, parameters: List[Parameter]) -> bool:
-        """Checking for unpacking of positional arguments."""
-        return self.is_args == bool(len([parameter for parameter in parameters if parameter.kind == parameter.VAR_POSITIONAL]))
-
-    def prove_is_kwargs(self, parameters: List[Parameter]) -> bool:
-        """Checking for unpacking of named arguments."""
-        return self.is_kwargs == bool(len([parameter for parameter in parameters if parameter.kind == parameter.VAR_KEYWORD]))
-
-    def prove_number_of_position_args(self, parameters: List[Parameter]) -> bool:
-        """Checking that the number of positional arguments matches the expected one."""
-        return self.number_of_position_args == len([parameter for parameter in parameters if (parameter.kind == parameter.POSITIONAL_ONLY or parameter.kind == parameter.POSITIONAL_OR_KEYWORD) and parameter.default == parameter.empty])
-
-    def prove_number_of_named_args(self, parameters: List[Parameter]) -> bool:
-        """Checking the number of named arguments."""
-        return self.number_of_named_args == len([parameter for parameter in parameters if (parameter.kind == parameter.KEYWORD_ONLY or parameter.kind == parameter.POSITIONAL_OR_KEYWORD) and parameter.default != parameter.empty])
-
-    def prove_names_of_named_args(self, parameters: List[Parameter]) -> bool:
-        """Checking that the names of the named arguments match the expected ones."""
-        names_of_parameters = [parameter.name for parameter in parameters if (parameter.kind == parameter.KEYWORD_ONLY or parameter.kind == parameter.POSITIONAL_OR_KEYWORD) and parameter.default != parameter.empty]
-
-        result: Union[bool, int] = True
-        for name in self.names_of_named_args:
-            result *= (name in names_of_parameters)
-
-        return bool(result)
