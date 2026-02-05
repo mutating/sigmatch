@@ -54,3 +54,37 @@ class AbstractSignatureMatcher:
             return ['?']
 
         return None
+
+    def check_expected_signature(self, expected_signature: List[str]) -> None:
+        met_name = False
+        met_star = False
+        met_double_star = False
+        all_met_names = set()
+
+        for item in expected_signature:
+            if not item.isidentifier() and item not in ('.', '*', '**'):
+                raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "{item}".')
+
+            if item == '.':
+                if met_name or met_star or met_double_star:
+                    raise IncorrectArgumentsOrderError('Positional arguments must be specified first.')
+
+            elif item.isidentifier():
+                met_name = True
+                if met_star or met_double_star:
+                    raise IncorrectArgumentsOrderError('Keyword arguments can be specified after positional ones, but before unpacking.')
+                if item in all_met_names:
+                    raise IncorrectArgumentsOrderError(f'The same argument name cannot occur twice. You have a repeat of "{item}".')
+                all_met_names.add(item)
+
+            elif item == '*':
+                if met_star:
+                    raise IncorrectArgumentsOrderError('Unpacking of the same type (*args in this case) can be specified no more than once.')
+                met_star = True
+                if met_double_star:
+                    raise IncorrectArgumentsOrderError('Unpacking positional arguments should go before unpacking keyword arguments.')
+
+            elif item == '**':
+                if met_double_star:
+                    raise IncorrectArgumentsOrderError('Unpacking of the same type (**kwargs in this case) can be specified no more than once.')
+                met_double_star = True
