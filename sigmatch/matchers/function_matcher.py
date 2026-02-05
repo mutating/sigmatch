@@ -29,7 +29,7 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
 
         ... such a "cast" will match:
 
-        SignatureMatcher('.', '.', 'c', '*', '**')
+        FunctionSignatureMatcher('.', '.', 'c', '*', '**')
         """
         for item in args:
             if not isinstance(item, str):
