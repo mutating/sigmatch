@@ -3,6 +3,22 @@ from typing import Callable, List, Any, Optional
 
 
 class AbstractSignatureMatcher:
+    def convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
+        result = []
+
+        for item in args:
+            splitted_item = item.split(',')
+            for chunk in splitted_item:
+                stripped_chunk = chunk.strip()
+                if stripped_chunk and all(x=='.' for x in stripped_chunk):
+                    for dot in stripped_chunk:
+                        result.append(dot)
+                else:
+                    result.append(stripped_chunk)
+
+        self.check_expected_signature(result)
+        return result
+
     def get_symbols_from_callable(self, function: Callable[..., Any]) -> List[str]:
         if not callable(function):
             raise ValueError('It is impossible to determine the signature of an object that is not being callable.')

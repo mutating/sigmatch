@@ -32,7 +32,6 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
         """
         symbols = self.convert_symbols(args)
 
-        self.check_expected_signature(symbols)
         self.expected_signature = symbols
         self.is_args = '*' in symbols
         self.is_kwargs = '**' in symbols
@@ -68,19 +67,4 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
 
         if not result and raise_exception:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
-        return result
-
-    def convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
-        result = []
-
-        for item in args:
-            splitted_item = item.split(',')
-            for chunk in splitted_item:
-                stripped_chunk = chunk.strip()
-                if stripped_chunk and all(x=='.' for x in stripped_chunk):
-                    for dot in stripped_chunk:
-                        result.append(dot)
-                else:
-                    result.append(stripped_chunk)
-
         return result
