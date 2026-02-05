@@ -1,10 +1,11 @@
 from inspect import signature, Signature, Parameter
 from typing import Callable, Tuple, List, Any, Union, Optional
 
+from sigmatch.matchers.abstract import AbstractSignatureMatcher
 from sigmatch.errors import SignatureMismatchError, IncorrectArgumentsOrderError, SignatureNotFoundError
 
 
-class FunctionSignatureMatcher:
+class FunctionSignatureMatcher(AbstractSignatureMatcher):
     """
     An object of this class contains a "cast" of the expected signature of the called object.
     It can then be applied to the actual called object (by the .match() method) to see if their signatures match the expected one.

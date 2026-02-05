@@ -1,0 +1,2 @@
+class AbstractSignatureMatcher:
+    pass
