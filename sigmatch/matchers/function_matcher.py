@@ -1,5 +1,4 @@
-from inspect import signature, Signature, Parameter
-from typing import Callable, Tuple, List, Any, Union, Optional
+from typing import Callable, Tuple, List, Any, Optional
 
 from sigmatch.matchers.abstract import AbstractSignatureMatcher
 from sigmatch.errors import SignatureMismatchError, IncorrectArgumentsOrderError, SignatureNotFoundError
@@ -74,44 +73,6 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
         if not result and raise_exception:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
-
-    def convert_parameters_to_symbols(self, parameters: List[Parameter]) -> List[str]:
-        result = []
-
-        for parameter in parameters:
-            if parameter.kind == Parameter.POSITIONAL_ONLY:
-                if parameter.default == Parameter.empty:
-                    result.append('.')
-                else:
-                    result.append('?')
-
-            elif parameter.kind == Parameter.POSITIONAL_OR_KEYWORD:
-                if parameter.default == Parameter.empty:
-                    result.append('.')
-                else:
-                    result.append(parameter.name)
-
-            elif parameter.kind == Parameter.KEYWORD_ONLY:
-                result.append(parameter.name)
-
-            elif parameter.kind == Parameter.VAR_POSITIONAL:
-                result.append('*')
-
-            elif parameter.kind == Parameter.VAR_KEYWORD:
-                result.append('**')
-
-        return result
-
-    def special_signature_search(self, function: Callable[..., Any]) -> Optional[List[str]]:
-        if function is next:
-            return ['.', '?']
-        elif function is anext:
-            return ['.', '?']
-        elif function is bool:
-            return ['?']
-
-        return None
-
 
     def convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
         result = []
