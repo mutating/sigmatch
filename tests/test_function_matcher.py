@@ -1,6 +1,7 @@
 import re
 
 import pytest
+from full_match import match
 
 from sigmatch import FunctionSignatureMatcher, SignatureMismatchError, IncorrectArgumentsOrderError
 
@@ -262,7 +263,7 @@ def test_random_generator_functions():
 
 
 def test_raise_exception_if_not_callable():
-    with pytest.raises(ValueError, match='It is impossible to determine the signature of an object that is not being callable.'):
+    with pytest.raises(ValueError, match=match('It is impossible to determine the signature of an object that is not being callable.')):
         FunctionSignatureMatcher().match('kek', raise_exception=True)
 
 

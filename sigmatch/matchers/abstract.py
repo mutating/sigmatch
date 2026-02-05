@@ -1,9 +1,61 @@
 from inspect import signature, Signature, Parameter
 from typing import Callable, List, Any, Optional
 
+from sigmatch.errors import IncorrectArgumentsOrderError
+
 
 class AbstractSignatureMatcher:
-    def convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
+    def __init__(self, *args: str) -> None:
+        """
+        Initializing an object is creating a "cast" of the expected function signature.
+
+        4 types of objects are accepted as arguments (they are all strings):
+
+        1. '.' - corresponds to an ordinary positional argument without a default value.
+        2. 'some_argument_name' - corresponds to an argument with a default value. The content of the string is the name of the argument.
+        3. '*' - corresponds to packing multiple positional arguments without default values (*args).
+        4. '**' - corresponds to packing several named arguments with default values (**kwargs).
+
+        For example, for a function titled like this:
+
+        def func(a, b, c=5, *d, **e):
+            ...
+
+        ... such a "cast" will match:
+
+        FunctionSignatureMatcher('.', '.', 'c', '*', '**')
+        """
+        for item in args:
+            if not isinstance(item, str):
+                raise TypeError(f'Only strings can be used as symbolic representation of function parameters. You used "{item}" ({type(item).__name__}).')
+
+        symbols = self._convert_symbols(args)
+
+        self.expected_signature = symbols
+        self.is_args = '*' in symbols
+        self.is_kwargs = '**' in symbols
+        self.number_of_position_args = len([x for x in symbols if x == '.'])
+        self.number_of_named_args = len([x for x in symbols if x.isidentifier()])
+        self.names_of_named_args = list(set([x for x in symbols if x.isidentifier()]))
+
+    def __repr__(self) -> str:
+        positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
+        named_args = ', '.join([x for x in self.expected_signature if x.isidentifier()])
+        star = '*' if self.is_args else ''
+        double_star = '**' if self.is_kwargs else ''
+
+        content = ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
+        quoted_content = f'"{content}"' if content else ''
+
+        return f'{type(self).__name__}({quoted_content})'
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, type(self)):
+            return False
+
+        return self.expected_signature == other.expected_signature
+
+    def _convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
         result = []
 
         for item in args:
@@ -16,25 +68,25 @@ class AbstractSignatureMatcher:
                 else:
                     result.append(stripped_chunk)
 
-        self.check_expected_signature(result)
+        self._check_expected_signature(result)
         return result
 
-    def get_symbols_from_callable(self, function: Callable[..., Any]) -> List[str]:
+    def _get_symbols_from_callable(self, function: Callable[..., Any]) -> List[str]:
         if not callable(function):
             raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
 
         try:
             function_signature: Optional[Signature] = signature(function)
             parameters = list(function_signature.parameters.values())
-            symbols = self.convert_parameters_to_symbols(parameters)
+            symbols = self._convert_parameters_to_symbols(parameters)
         except ValueError as e:
-            symbols = self.special_signature_search(function)
+            symbols = self._special_signature_search(function)
             if symbols is None:
                 raise ValueError() from e
 
         return symbols
 
-    def convert_parameters_to_symbols(self, parameters: List[Parameter]) -> List[str]:
+    def _convert_parameters_to_symbols(self, parameters: List[Parameter]) -> List[str]:
         result = []
 
         for parameter in parameters:
@@ -61,7 +113,7 @@ class AbstractSignatureMatcher:
 
         return result
 
-    def special_signature_search(self, function: Callable[..., Any]) -> Optional[List[str]]:
+    def _special_signature_search(self, function: Callable[..., Any]) -> Optional[List[str]]:
         if function is next:
             return ['.', '?']
         elif function is anext:
@@ -71,7 +123,7 @@ class AbstractSignatureMatcher:
 
         return None
 
-    def check_expected_signature(self, expected_signature: List[str]) -> None:
+    def _check_expected_signature(self, expected_signature: List[str]) -> None:
         met_name = False
         met_star = False
         met_double_star = False

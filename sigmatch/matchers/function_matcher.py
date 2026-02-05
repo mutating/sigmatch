@@ -10,52 +10,6 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
     It can then be applied to the actual called object (by the .match() method) to see if their signatures match the expected one.
     """
 
-    def __init__(self, *args: str) -> None:
-        """
-        Initializing an object is creating a "cast" of the expected function signature.
-
-        4 types of objects are accepted as arguments (they are all strings):
-
-        1. '.' - corresponds to an ordinary positional argument without a default value.
-        2. 'some_argument_name' - corresponds to an argument with a default value. The content of the string is the name of the argument.
-        3. '*' - corresponds to packing multiple positional arguments without default values (*args).
-        4. '**' - corresponds to packing several named arguments with default values (**kwargs).
-
-        For example, for a function titled like this:
-
-        def func(a, b, c=5, *d, **e):
-            ...
-
-        ... such a "cast" will match:
-
-        FunctionSignatureMatcher('.', '.', 'c', '*', '**')
-        """
-        symbols = self.convert_symbols(args)
-
-        self.expected_signature = symbols
-        self.is_args = '*' in symbols
-        self.is_kwargs = '**' in symbols
-        self.number_of_position_args = len([x for x in symbols if x == '.'])
-        self.number_of_named_args = len([x for x in symbols if x.isidentifier()])
-        self.names_of_named_args = list(set([x for x in symbols if x.isidentifier()]))
-
-    def __repr__(self) -> str:
-        positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
-        named_args = ', '.join([x for x in self.expected_signature if x.isidentifier()])
-        star = '*' if self.is_args else ''
-        double_star = '**' if self.is_kwargs else ''
-
-        content = ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
-        quoted_content = f'"{content}"' if content else ''
-
-        return f'{type(self).__name__}({quoted_content})'
-
-    def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, type(self)):
-            return False
-
-        return self.expected_signature == other.expected_signature
-
     def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         """We check that the signature of the function passed as an argument corresponds to the "cast" obtained during initialization of the SignatureMatcher object."""
         if not callable(function):
@@ -63,7 +17,7 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
                 raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
             return False
 
-        result = self.get_symbols_from_callable(function) == self.expected_signature
+        result = self._get_symbols_from_callable(function) == self.expected_signature
 
         if not result and raise_exception:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
