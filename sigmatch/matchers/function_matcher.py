@@ -30,10 +30,6 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
 
         FunctionSignatureMatcher('.', '.', 'c', '*', '**')
         """
-        for item in args:
-            if not isinstance(item, str):
-                raise TypeError(f'Only strings can be used as symbolic representation of function parameters. You used "{item}" ({type(item).__name__}).')
-
         symbols = self.convert_symbols(args)
 
         self.check_expected_signature(symbols)
