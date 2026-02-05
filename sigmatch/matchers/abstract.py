@@ -6,25 +6,6 @@ from sigmatch.errors import IncorrectArgumentsOrderError
 
 class AbstractSignatureMatcher:
     def __init__(self, *args: str) -> None:
-        """
-        Initializing an object is creating a "cast" of the expected function signature.
-
-        4 types of objects are accepted as arguments (they are all strings):
-
-        1. '.' - corresponds to an ordinary positional argument without a default value.
-        2. 'some_argument_name' - corresponds to an argument with a default value. The content of the string is the name of the argument.
-        3. '*' - corresponds to packing multiple positional arguments without default values (*args).
-        4. '**' - corresponds to packing several named arguments with default values (**kwargs).
-
-        For example, for a function titled like this:
-
-        def func(a, b, c=5, *d, **e):
-            ...
-
-        ... such a "cast" will match:
-
-        FunctionSignatureMatcher('.', '.', 'c', '*', '**')
-        """
         for item in args:
             if not isinstance(item, str):
                 raise TypeError(f'Only strings can be used as symbolic representation of function parameters. You used "{item}" ({type(item).__name__}).')
