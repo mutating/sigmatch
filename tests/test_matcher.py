@@ -2,7 +2,7 @@ import re
 
 import pytest
 
-from sigmatch import SignatureMatcher, SignatureMismatchError, IncorrectArgumentsOrderError
+from sigmatch import FunctionSignatureMatcher, SignatureMismatchError, IncorrectArgumentsOrderError
 
 
 def test_random_functions():
@@ -31,23 +31,23 @@ def test_random_functions():
     def function_12(c=False, c2=False):
         pass
 
-    assert SignatureMatcher().match(function_1) == True
-    assert SignatureMatcher('.').match(function_2) == True
-    assert SignatureMatcher('**').match(function_3) == True
-    assert SignatureMatcher('*', '**').match(function_4) == True
-    assert SignatureMatcher('.', '.').match(function_5) == True
-    assert SignatureMatcher('.', '.', '.').match(function_6) == True
-    assert SignatureMatcher('.', '.', 'c').match(function_7) == True
-    assert SignatureMatcher('.', '.', 'c', '*').match(function_8) == True
-    assert SignatureMatcher('.', '.', 'c', '*', '**').match(function_9) == True
-    assert SignatureMatcher('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
-    assert SignatureMatcher('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
-    assert SignatureMatcher('c', 'c2').match(function_12) == True
+    assert FunctionSignatureMatcher().match(function_1) == True
+    assert FunctionSignatureMatcher('.').match(function_2) == True
+    assert FunctionSignatureMatcher('**').match(function_3) == True
+    assert FunctionSignatureMatcher('*', '**').match(function_4) == True
+    assert FunctionSignatureMatcher('.', '.').match(function_5) == True
+    assert FunctionSignatureMatcher('.', '.', '.').match(function_6) == True
+    assert FunctionSignatureMatcher('.', '.', 'c').match(function_7) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', '*').match(function_8) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', '*', '**').match(function_9) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
+    assert FunctionSignatureMatcher('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
+    assert FunctionSignatureMatcher('c', 'c2').match(function_12) == True
 
-    assert SignatureMatcher('.').match(lambda x: None) == True
-    assert SignatureMatcher('.', '.').match(lambda x, y: None) == True
-    assert SignatureMatcher('.', '*').match(lambda x, *y: None) == True
-    assert SignatureMatcher('.', '**').match(lambda x, **y: None) == True
+    assert FunctionSignatureMatcher('.').match(lambda x: None) == True
+    assert FunctionSignatureMatcher('.', '.').match(lambda x, y: None) == True
+    assert FunctionSignatureMatcher('.', '*').match(lambda x, *y: None) == True
+    assert FunctionSignatureMatcher('.', '**').match(lambda x, **y: None) == True
 
 
 def test_random_async_functions():
@@ -76,18 +76,18 @@ def test_random_async_functions():
     async def function_12(c=False, c2=False):
         pass
 
-    assert SignatureMatcher().match(function_1) == True
-    assert SignatureMatcher('.').match(function_2) == True
-    assert SignatureMatcher('**').match(function_3) == True
-    assert SignatureMatcher('*', '**').match(function_4) == True
-    assert SignatureMatcher('.', '.').match(function_5) == True
-    assert SignatureMatcher('.', '.', '.').match(function_6) == True
-    assert SignatureMatcher('.', '.', 'c').match(function_7) == True
-    assert SignatureMatcher('.', '.', 'c', '*').match(function_8) == True
-    assert SignatureMatcher('.', '.', 'c', '*', '**').match(function_9) == True
-    assert SignatureMatcher('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
-    assert SignatureMatcher('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
-    assert SignatureMatcher('c', 'c2').match(function_12) == True
+    assert FunctionSignatureMatcher().match(function_1) == True
+    assert FunctionSignatureMatcher('.').match(function_2) == True
+    assert FunctionSignatureMatcher('**').match(function_3) == True
+    assert FunctionSignatureMatcher('*', '**').match(function_4) == True
+    assert FunctionSignatureMatcher('.', '.').match(function_5) == True
+    assert FunctionSignatureMatcher('.', '.', '.').match(function_6) == True
+    assert FunctionSignatureMatcher('.', '.', 'c').match(function_7) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', '*').match(function_8) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', '*', '**').match(function_9) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
+    assert FunctionSignatureMatcher('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
+    assert FunctionSignatureMatcher('c', 'c2').match(function_12) == True
 
 
 def test_random_wrong_functions():
@@ -116,18 +116,18 @@ def test_random_wrong_functions():
     def function_12(c=False, c2=False):
         pass
 
-    assert SignatureMatcher('.').match(function_1) == False
-    assert SignatureMatcher('c').match(function_2) == False
-    assert SignatureMatcher('.', '**').match(function_3) == False
-    assert SignatureMatcher('.', '**').match(function_4) == False
-    assert SignatureMatcher('.', 'c').match(function_5) == False
-    assert SignatureMatcher('.', '.').match(function_6) == False
-    assert SignatureMatcher('.', '.').match(function_7) == False
-    assert SignatureMatcher('.', '.', 'c').match(function_8) == False
-    assert SignatureMatcher('.', 'c', '*', '**').match(function_9) == False
-    assert SignatureMatcher('.', '.', 'c2', '*', '**').match(function_10) == False
-    assert SignatureMatcher('.', '.', 'c2', '*', '**').match(function_11) == False
-    assert SignatureMatcher('c').match(function_12) == False
+    assert FunctionSignatureMatcher('.').match(function_1) == False
+    assert FunctionSignatureMatcher('c').match(function_2) == False
+    assert FunctionSignatureMatcher('.', '**').match(function_3) == False
+    assert FunctionSignatureMatcher('.', '**').match(function_4) == False
+    assert FunctionSignatureMatcher('.', 'c').match(function_5) == False
+    assert FunctionSignatureMatcher('.', '.').match(function_6) == False
+    assert FunctionSignatureMatcher('.', '.').match(function_7) == False
+    assert FunctionSignatureMatcher('.', '.', 'c').match(function_8) == False
+    assert FunctionSignatureMatcher('.', 'c', '*', '**').match(function_9) == False
+    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_10) == False
+    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_11) == False
+    assert FunctionSignatureMatcher('c').match(function_12) == False
 
 
 def test_random_wrong_async_functions():
@@ -156,23 +156,23 @@ def test_random_wrong_async_functions():
     async def function_12(c=False, c2=False):
         pass
 
-    assert SignatureMatcher('.').match(function_1) == False
-    assert SignatureMatcher('c').match(function_2) == False
-    assert SignatureMatcher('.', '**').match(function_3) == False
-    assert SignatureMatcher('.', '**').match(function_4) == False
-    assert SignatureMatcher('.', 'c').match(function_5) == False
-    assert SignatureMatcher('.', '.').match(function_6) == False
-    assert SignatureMatcher('.', '.').match(function_7) == False
-    assert SignatureMatcher('.', '.', 'c').match(function_8) == False
-    assert SignatureMatcher('.', 'c', '*', '**').match(function_9) == False
-    assert SignatureMatcher('.', '.', 'c2', '*', '**').match(function_10) == False
-    assert SignatureMatcher('.', '.', 'c2', '*', '**').match(function_11) == False
-    assert SignatureMatcher('c').match(function_12) == False
+    assert FunctionSignatureMatcher('.').match(function_1) == False
+    assert FunctionSignatureMatcher('c').match(function_2) == False
+    assert FunctionSignatureMatcher('.', '**').match(function_3) == False
+    assert FunctionSignatureMatcher('.', '**').match(function_4) == False
+    assert FunctionSignatureMatcher('.', 'c').match(function_5) == False
+    assert FunctionSignatureMatcher('.', '.').match(function_6) == False
+    assert FunctionSignatureMatcher('.', '.').match(function_7) == False
+    assert FunctionSignatureMatcher('.', '.', 'c').match(function_8) == False
+    assert FunctionSignatureMatcher('.', 'c', '*', '**').match(function_9) == False
+    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_10) == False
+    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_11) == False
+    assert FunctionSignatureMatcher('c').match(function_12) == False
 
-    assert SignatureMatcher().match(lambda x: None) == False
-    assert SignatureMatcher('.').match(lambda x, y: None) == False
-    assert SignatureMatcher('*').match(lambda x, *y: None) == False
-    assert SignatureMatcher('**').match(lambda x, **y: None) == False
+    assert FunctionSignatureMatcher().match(lambda x: None) == False
+    assert FunctionSignatureMatcher('.').match(lambda x, y: None) == False
+    assert FunctionSignatureMatcher('*').match(lambda x, *y: None) == False
+    assert FunctionSignatureMatcher('**').match(lambda x, **y: None) == False
 
 
 def test_random_wrong_generator_functions():
@@ -204,18 +204,18 @@ def test_random_wrong_generator_functions():
     def function_12(c=False, c2=False):
         yield None
 
-    assert SignatureMatcher('.').match(function_1) == False
-    assert SignatureMatcher('c').match(function_2) == False
-    assert SignatureMatcher('.', '**').match(function_3) == False
-    assert SignatureMatcher('.', '**').match(function_4) == False
-    assert SignatureMatcher('.', 'c').match(function_5) == False
-    assert SignatureMatcher('.', '.').match(function_6) == False
-    assert SignatureMatcher('.', '.').match(function_7) == False
-    assert SignatureMatcher('.', '.', 'c').match(function_8) == False
-    assert SignatureMatcher('.', 'c', '*', '**').match(function_9) == False
-    assert SignatureMatcher('.', '.', 'c2', '*', '**').match(function_10) == False
-    assert SignatureMatcher('.', '.', 'c2', '*', '**').match(function_11) == False
-    assert SignatureMatcher('c').match(function_12) == False
+    assert FunctionSignatureMatcher('.').match(function_1) == False
+    assert FunctionSignatureMatcher('c').match(function_2) == False
+    assert FunctionSignatureMatcher('.', '**').match(function_3) == False
+    assert FunctionSignatureMatcher('.', '**').match(function_4) == False
+    assert FunctionSignatureMatcher('.', 'c').match(function_5) == False
+    assert FunctionSignatureMatcher('.', '.').match(function_6) == False
+    assert FunctionSignatureMatcher('.', '.').match(function_7) == False
+    assert FunctionSignatureMatcher('.', '.', 'c').match(function_8) == False
+    assert FunctionSignatureMatcher('.', 'c', '*', '**').match(function_9) == False
+    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_10) == False
+    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_11) == False
+    assert FunctionSignatureMatcher('c').match(function_12) == False
 
 
 def test_random_generator_functions():
@@ -247,23 +247,23 @@ def test_random_generator_functions():
     def function_12(c=False, c2=False):
         yield None
 
-    assert SignatureMatcher().match(function_1) == True
-    assert SignatureMatcher('.').match(function_2) == True
-    assert SignatureMatcher('**').match(function_3) == True
-    assert SignatureMatcher('*', '**').match(function_4) == True
-    assert SignatureMatcher('.', '.').match(function_5) == True
-    assert SignatureMatcher('.', '.', '.').match(function_6) == True
-    assert SignatureMatcher('.', '.', 'c').match(function_7) == True
-    assert SignatureMatcher('.', '.', 'c', '*').match(function_8) == True
-    assert SignatureMatcher('.', '.', 'c', '*', '**').match(function_9) == True
-    assert SignatureMatcher('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
-    assert SignatureMatcher('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
-    assert SignatureMatcher('c', 'c2').match(function_12) == True
+    assert FunctionSignatureMatcher().match(function_1) == True
+    assert FunctionSignatureMatcher('.').match(function_2) == True
+    assert FunctionSignatureMatcher('**').match(function_3) == True
+    assert FunctionSignatureMatcher('*', '**').match(function_4) == True
+    assert FunctionSignatureMatcher('.', '.').match(function_5) == True
+    assert FunctionSignatureMatcher('.', '.', '.').match(function_6) == True
+    assert FunctionSignatureMatcher('.', '.', 'c').match(function_7) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', '*').match(function_8) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', '*', '**').match(function_9) == True
+    assert FunctionSignatureMatcher('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
+    assert FunctionSignatureMatcher('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
+    assert FunctionSignatureMatcher('c', 'c2').match(function_12) == True
 
 
 def test_raise_exception_if_not_callable():
     with pytest.raises(ValueError, match='It is impossible to determine the signature of an object that is not being callable.'):
-        SignatureMatcher().match('kek', raise_exception=True)
+        FunctionSignatureMatcher().match('kek', raise_exception=True)
 
 
 @pytest.mark.parametrize(
@@ -274,12 +274,12 @@ def test_raise_exception_if_not_callable():
     ],
 )
 def test_not_raise_exception_if_not_callable(options):
-    assert SignatureMatcher().match('kek', **options) == False
+    assert FunctionSignatureMatcher().match('kek', **options) == False
 
 
 def test_raise_exception_if_dismatch():
     with pytest.raises(SignatureMismatchError):
-        SignatureMatcher().match(lambda x: None, raise_exception=True)
+        FunctionSignatureMatcher().match(lambda x: None, raise_exception=True)
 
 
 @pytest.mark.parametrize(
@@ -290,7 +290,7 @@ def test_raise_exception_if_dismatch():
     ],
 )
 def test_not_raise_exception_if_dismatch_and_flag_is_false(options):
-    assert SignatureMatcher().match(lambda x: None, **options) == False
+    assert FunctionSignatureMatcher().match(lambda x: None, **options) == False
 
 
 def test_it_works_with_class_based_callables():
@@ -298,16 +298,16 @@ def test_it_works_with_class_based_callables():
         def __call__(self):
             pass
 
-    assert SignatureMatcher().match(LocalCallable)
-    assert not SignatureMatcher('.').match(LocalCallable)
+    assert FunctionSignatureMatcher().match(LocalCallable)
+    assert not FunctionSignatureMatcher('.').match(LocalCallable)
 
 
 def test_empty_class_as_callable():
     class Kek:
         pass
 
-    assert SignatureMatcher().match(Kek)
-    assert not SignatureMatcher('.').match(Kek)
+    assert FunctionSignatureMatcher().match(Kek)
+    assert not FunctionSignatureMatcher('.').match(Kek)
 
 
 def test_class_with_init_as_callable():
@@ -315,8 +315,8 @@ def test_class_with_init_as_callable():
         def __init__(self, a, b, c):
             pass
 
-    assert SignatureMatcher('.', '.', '.').match(Kek)
-    assert not SignatureMatcher().match(Kek)
+    assert FunctionSignatureMatcher('.', '.', '.').match(Kek)
+    assert not FunctionSignatureMatcher().match(Kek)
 
 
 def test_class_with_call_dunder_object_is_callable():
@@ -324,8 +324,8 @@ def test_class_with_call_dunder_object_is_callable():
         def __call__(self, a, b, c):
             pass
 
-    assert SignatureMatcher('.', '.', '.').match(Kek())
-    assert not SignatureMatcher().match(Kek())
+    assert FunctionSignatureMatcher('.', '.', '.').match(Kek())
+    assert not FunctionSignatureMatcher().match(Kek())
 
 
 def test_check_method():
@@ -333,18 +333,18 @@ def test_check_method():
         def kek(self, a, b, c):
             pass
 
-    assert SignatureMatcher('.', '.', '.').match(Kek().kek)
-    assert not SignatureMatcher().match(Kek().kek)
+    assert FunctionSignatureMatcher('.', '.', '.').match(Kek().kek)
+    assert not FunctionSignatureMatcher().match(Kek().kek)
 
 
 def test_if_parameter_is_not_string():
     with pytest.raises(TypeError, match=re.escape('Only strings can be used as symbolic representation of function parameters. You used "1" (int).')):
-        SignatureMatcher('.', 1, '.')
+        FunctionSignatureMatcher('.', 1, '.')
 
 
 def test_bad_string_with_spaces_as_parameter():
     with pytest.raises(ValueError, match=re.escape('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "".')):
-        SignatureMatcher('.', '   ')
+        FunctionSignatureMatcher('.', '   ')
 
 
 @pytest.mark.parametrize(
@@ -357,7 +357,7 @@ def test_bad_string_with_spaces_as_parameter():
 )
 def test_other_bad_string_as_parameter(bad_string):
     with pytest.raises(ValueError, match=re.escape(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "{bad_string}".')):
-        SignatureMatcher('.', bad_string)
+        FunctionSignatureMatcher('.', bad_string)
 
 
 @pytest.mark.parametrize(
@@ -380,7 +380,7 @@ def test_other_bad_string_as_parameter(bad_string):
 )
 def test_wrong_order(before, message, after):
     with pytest.raises(IncorrectArgumentsOrderError, match=re.escape(message)):
-        SignatureMatcher(before, after)
+        FunctionSignatureMatcher(before, after)
 
 
 @pytest.mark.parametrize(
@@ -406,30 +406,30 @@ def test_wrong_order(before, message, after):
     ],
 )
 def test_strings_with_multiple_items(input, output):
-    assert SignatureMatcher(*input).expected_signature == output
+    assert FunctionSignatureMatcher(*input).expected_signature == output
 
 
 def test_repr():
-    assert repr(SignatureMatcher()) == 'SignatureMatcher()'
-    assert repr(SignatureMatcher('.')) == 'SignatureMatcher(".")'
-    assert repr(SignatureMatcher('...')) == 'SignatureMatcher("...")'
-    assert repr(SignatureMatcher('..., kek')) == 'SignatureMatcher("..., kek")'
-    assert repr(SignatureMatcher('kek')) == 'SignatureMatcher("kek")'
-    assert repr(SignatureMatcher('kek, lol')) == 'SignatureMatcher("kek, lol")'
-    assert repr(SignatureMatcher('kek, lol, *')) == 'SignatureMatcher("kek, lol, *")'
-    assert repr(SignatureMatcher('*')) == 'SignatureMatcher("*")'
-    assert repr(SignatureMatcher('*, **')) == 'SignatureMatcher("*, **")'
-    assert repr(SignatureMatcher('**')) == 'SignatureMatcher("**")'
-    assert repr(SignatureMatcher('..., kek, *, **')) == 'SignatureMatcher("..., kek, *, **")'
+    assert repr(FunctionSignatureMatcher()) == 'FunctionSignatureMatcher()'
+    assert repr(FunctionSignatureMatcher('.')) == 'FunctionSignatureMatcher(".")'
+    assert repr(FunctionSignatureMatcher('...')) == 'FunctionSignatureMatcher("...")'
+    assert repr(FunctionSignatureMatcher('..., kek')) == 'FunctionSignatureMatcher("..., kek")'
+    assert repr(FunctionSignatureMatcher('kek')) == 'FunctionSignatureMatcher("kek")'
+    assert repr(FunctionSignatureMatcher('kek, lol')) == 'FunctionSignatureMatcher("kek, lol")'
+    assert repr(FunctionSignatureMatcher('kek, lol, *')) == 'FunctionSignatureMatcher("kek, lol, *")'
+    assert repr(FunctionSignatureMatcher('*')) == 'FunctionSignatureMatcher("*")'
+    assert repr(FunctionSignatureMatcher('*, **')) == 'FunctionSignatureMatcher("*, **")'
+    assert repr(FunctionSignatureMatcher('**')) == 'FunctionSignatureMatcher("**")'
+    assert repr(FunctionSignatureMatcher('..., kek, *, **')) == 'FunctionSignatureMatcher("..., kek, *, **")'
 
 
 def test_eq():
-    assert SignatureMatcher() == SignatureMatcher()
-    assert SignatureMatcher('.') == SignatureMatcher('.')
-    assert SignatureMatcher('..., kek, *, **') == SignatureMatcher('..., kek, *, **')
-    assert SignatureMatcher('..., kek, *, **') == SignatureMatcher('...', 'kek', '*', '**')
+    assert FunctionSignatureMatcher() == FunctionSignatureMatcher()
+    assert FunctionSignatureMatcher('.') == FunctionSignatureMatcher('.')
+    assert FunctionSignatureMatcher('..., kek, *, **') == FunctionSignatureMatcher('..., kek, *, **')
+    assert FunctionSignatureMatcher('..., kek, *, **') == FunctionSignatureMatcher('...', 'kek', '*', '**')
 
-    assert not (SignatureMatcher('.') == SignatureMatcher())
-    assert not (SignatureMatcher('..., kek, *, **') == SignatureMatcher('...', 'kek', '*'))
-    assert not (SignatureMatcher('.') == 5)
-    assert not (SignatureMatcher('.') == 'kek')
+    assert not (FunctionSignatureMatcher('.') == FunctionSignatureMatcher())
+    assert not (FunctionSignatureMatcher('..., kek, *, **') == FunctionSignatureMatcher('...', 'kek', '*'))
+    assert not (FunctionSignatureMatcher('.') == 5)
+    assert not (FunctionSignatureMatcher('.') == 'kek')
