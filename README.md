@@ -10,6 +10,7 @@
 [![PyPI version](https://badge.fury.io/py/sigmatch.svg)](https://badge.fury.io/py/sigmatch)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pomponchik/sigmatch)
 
 
 This small library allows you to quickly check whether any called object matches the signature you expect. This may be useful to you, for example, if you write libraries that work with callbacks.
