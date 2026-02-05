@@ -63,8 +63,6 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         elif set(self.names_of_named_args) != set(callable_matcher.names_of_named_args):
             result = False
 
-
-
         if not result and raise_exception:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
