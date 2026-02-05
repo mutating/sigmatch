@@ -75,21 +75,6 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
 
-    def get_symbols_from_callable(self, function: Callable[..., Any]) -> List[str]:
-        if not callable(function):
-            raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
-
-        try:
-            function_signature: Optional[Signature] = signature(function)
-            parameters = list(function_signature.parameters.values())
-            symbols = self.convert_parameters_to_symbols(parameters)
-        except ValueError as e:
-            symbols = self.special_signature_search()
-            if symbols is None:
-                raise ValueError() from e
-
-        return symbols
-
     def convert_parameters_to_symbols(self, parameters: List[Parameter]) -> List[str]:
         result = []
 
