@@ -51,7 +51,7 @@ def test_repr(matcher_class):
 
 
 @pytest.mark.parametrize(
-    ['input', 'output'],
+    ('to_split', 'output'),
     [
         (['lol, kek'], ['lol', 'kek']),
         (['., .'], ['.', '.']),
@@ -72,12 +72,12 @@ def test_repr(matcher_class):
         (['..., kek, *, **'], ['.', '.', '.', 'kek', '*', '**']),
     ],
 )
-def test_strings_with_multiple_items(input, output, matcher_class):
-    assert matcher_class(*input).expected_signature == output
+def test_strings_with_multiple_items(to_split, output, matcher_class):
+    assert matcher_class(*to_split).expected_signature == output
 
 
 @pytest.mark.parametrize(
-    ['before', 'after', 'message'],
+    ('before', 'after', 'message'),
     [
         ('kek', '.', 'Positional arguments must be specified first.'),
         ('*', '.', 'Positional arguments must be specified first.'),
@@ -166,10 +166,10 @@ def test_strict_match_for_random_functions(matcher_class):
     assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11)
     assert matcher_class('c', 'c2').match(function_12)
 
-    assert matcher_class('.').match(lambda x: None)
-    assert matcher_class('.', '.').match(lambda x, y: None)
-    assert matcher_class('.', '*').match(lambda x, *y: None)
-    assert matcher_class('.', '**').match(lambda x, **y: None)
+    assert matcher_class('.').match(lambda x: None)  # noqa: ARG005
+    assert matcher_class('.', '.').match(lambda x, y: None)  # noqa: ARG005
+    assert matcher_class('.', '*').match(lambda x, *y: None)  # noqa: ARG005
+    assert matcher_class('.', '**').match(lambda x, **y: None)  # noqa: ARG005
 
 
 def test_strict_match_random_async_functions(matcher_class):
@@ -215,27 +215,27 @@ def test_strict_match_random_async_functions(matcher_class):
 def test_strict_match_random_generator_functions(matcher_class):
     def function_1():
         yield None
-    def function_2(arg):
+    def function_2(arg):  # noqa: ARG001
         yield None
-    def function_3(**kwargs):
+    def function_3(**kwargs):  # noqa: ARG001
         yield None
-    def function_4(*args, **kwargs):
+    def function_4(*args, **kwargs):  # noqa: ARG001
         yield None
-    def function_5(a, b):
+    def function_5(a, b):  # noqa: ARG001
         yield None
-    def function_6(a, b, c):
+    def function_6(a, b, c):  # noqa: ARG001
         yield None
-    def function_7(a, b, c=False):
+    def function_7(a, b, c=False):  # noqa: ARG001
         yield None
-    def function_8(a, b, c=False, *d):
+    def function_8(a, b, c=False, *d):  # noqa: ARG001
         yield None
-    def function_9(a, b, c=False, *d, **e):
+    def function_9(a, b, c=False, *d, **e):  # noqa: ARG001
         yield None
-    def function_10(a, b, c=False, c2=False, *d, **e):
+    def function_10(a, b, c=False, c2=False, *d, **e):  # noqa: ARG001
         yield None
-    def function_11(a, b, b2, c=False, c2=False, *d, **e):
+    def function_11(a, b, b2, c=False, c2=False, *d, **e):  # noqa: ARG001
         yield None
-    def function_12(c=False, c2=False):
+    def function_12(c=False, c2=False):  # noqa: ARG001
         yield None
 
     assert matcher_class().match(function_1)
@@ -254,7 +254,7 @@ def test_strict_match_random_generator_functions(matcher_class):
 
 def test_raise_exception_if_dismatch(matcher_class):
     with pytest.raises(SignatureMismatchError):
-        matcher_class().match(lambda x: None, raise_exception=True)
+        matcher_class().match(lambda x: None, raise_exception=True)  # noqa: ARG005
 
 
 @pytest.mark.parametrize(
@@ -265,7 +265,7 @@ def test_raise_exception_if_dismatch(matcher_class):
     ],
 )
 def test_not_raise_exception_if_dismatch_and_flag_is_false(options, matcher_class):
-    assert not matcher_class().match(lambda x: None, **options)
+    assert not matcher_class().match(lambda x: None, **options)  # noqa: ARG005
 
 
 def test_it_works_with_class_based_callables(matcher_class):

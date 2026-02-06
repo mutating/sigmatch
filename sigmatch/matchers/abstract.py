@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from inspect import Parameter, Signature, signature
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple, cast
 
 from sigmatch.errors import (
     IncorrectArgumentsOrderError,
@@ -9,7 +9,7 @@ from sigmatch.errors import (
 )
 
 
-class AbstractSignatureMatcher(ABC):
+class AbstractSignatureMatcher(ABC):  # noqa: PLW1641
     def __init__(self, *args: str) -> None:
         for item in args:
             if not isinstance(item, str):
@@ -61,9 +61,9 @@ class AbstractSignatureMatcher(ABC):
         try:
             symbols = cls._get_symbols_from_callable(function)
             error = False
-        except Exception as e:
+        except Exception:
             if raise_exception:
-                raise e
+                raise
             symbols = []
         result = cls(*symbols)
         result.is_wrong = error
@@ -93,9 +93,8 @@ class AbstractSignatureMatcher(ABC):
     def _get_symbols_from_callable(cls, function: Callable[..., Any]) -> List[str]:
         try:
             function_signature: Optional[Signature] = signature(function)
-            parameters = list(function_signature.parameters.values())
-            symbols = cls._convert_parameters_to_symbols(parameters)
-            return symbols
+            parameters = list(cast(Signature, function_signature).parameters.values())
+            return cls._convert_parameters_to_symbols(parameters)
         except ValueError as e:
             raise SignatureNotFoundError('For some functions, it is not possible to extract the signature, and this is one of them.') from e
 

@@ -80,36 +80,36 @@ def test_random_wrong_async_functions():
     assert not FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_11)
     assert not FunctionSignatureMatcher('c').match(function_12)
 
-    assert not FunctionSignatureMatcher().match(lambda x: None)
-    assert not FunctionSignatureMatcher('.').match(lambda x, y: None)
-    assert not FunctionSignatureMatcher('*').match(lambda x, *y: None)
-    assert not FunctionSignatureMatcher('**').match(lambda x, **y: None)
+    assert not FunctionSignatureMatcher().match(lambda x: None)  # noqa: ARG005
+    assert not FunctionSignatureMatcher('.').match(lambda x, y: None)  # noqa: ARG005
+    assert not FunctionSignatureMatcher('*').match(lambda x, *y: None)  # noqa: ARG005
+    assert not FunctionSignatureMatcher('**').match(lambda x, **y: None)  # noqa: ARG005
 
 
 def test_random_wrong_generator_functions():
     def function_1():
         yield None
-    def function_2(arg):
+    def function_2(arg):  # noqa: ARG001
         yield None
-    def function_3(**kwargs):
+    def function_3(**kwargs):  # noqa: ARG001
         yield None
-    def function_4(*args, **kwargs):
+    def function_4(*args, **kwargs):  # noqa: ARG001
         yield None
-    def function_5(a, b):
+    def function_5(a, b):  # noqa: ARG001
         yield None
-    def function_6(a, b, c):
+    def function_6(a, b, c):  # noqa: ARG001
         yield None
-    def function_7(a, b, c=False):
+    def function_7(a, b, c=False):  # noqa: ARG001
         yield None
-    def function_8(a, b, c=False, *d):
+    def function_8(a, b, c=False, *d):  # noqa: ARG001
         yield None
-    def function_9(a, b, c=False, *d, **e):
+    def function_9(a, b, c=False, *d, **e):  # noqa: ARG001
         yield None
-    def function_10(a, b, c=False, c2=False, *d, **e):
+    def function_10(a, b, c=False, c2=False, *d, **e):  # noqa: ARG001
         yield None
-    def function_11(a, b, b2, c=False, c2=False, *d, **e):
+    def function_11(a, b, b2, c=False, c2=False, *d, **e):  # noqa: ARG001
         yield None
-    def function_12(c=False, c2=False):
+    def function_12(c=False, c2=False):  # noqa: ARG001
         yield None
 
     assert not FunctionSignatureMatcher('.').match(function_1)
