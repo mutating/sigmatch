@@ -14,7 +14,45 @@ def test_there_should_be_star_in_signature_if_call_contains_it():
     assert PossibleCallMatcher('*').match(function_with_star_1)
     assert PossibleCallMatcher('..., *').match(function_with_star_2)
 
-    assert not PossibleCallMatcher('*').match(function_without_star_1, raise_exception=False)
-    assert not PossibleCallMatcher('*').match(function_without_star_2, raise_exception=False)
-    assert not PossibleCallMatcher('..., *').match(function_without_star_2, raise_exception=False)
-    assert not PossibleCallMatcher('.., *').match(function_without_star_2, raise_exception=False)
+    assert not PossibleCallMatcher('*').match(function_without_star_1)
+    assert not PossibleCallMatcher('*').match(function_without_star_2)
+    assert not PossibleCallMatcher('..., *').match(function_without_star_2)
+    assert not PossibleCallMatcher('.., *').match(function_without_star_2)
+
+
+def test_number_of_dots_in_call_cant_be_less_than_in_signature_if_signature_contains_star_and_dots_and_call_contains_only_star():
+    def example(a, b, c, *args): ...
+
+    assert PossibleCallMatcher('..., *').match(example)
+    assert PossibleCallMatcher('...., *').match(example)
+    assert PossibleCallMatcher('......., *').match(example)
+
+    assert not PossibleCallMatcher('.., *').match(example)
+    assert not PossibleCallMatcher('*').match(example)
+    assert not PossibleCallMatcher('., *').match(example)
+
+
+def test_dots_number_in_call_has_be_equal_to_signatures_one_if_signature_and_call_doesnt_contain_star():
+    def example_1(a, b, c): ...
+    def example_2(): ...
+
+    assert PossibleCallMatcher('...').match(example_1)
+    assert PossibleCallMatcher().match(example_2)
+
+    assert not PossibleCallMatcher('....').match(example_1)
+    assert not PossibleCallMatcher('.').match(example_2)
+
+
+def test_dots_number_in_call_has_be_equal_or_more_to_signatures_one_if_call_doesnt_contain_star_but_signature_sontains():
+    def example_1(a, b, c, *args): ...
+    def example_2(*args): ...
+
+    assert PossibleCallMatcher('...').match(example_1)
+    assert PossibleCallMatcher().match(example_2)
+    assert PossibleCallMatcher('....').match(example_1)
+    assert PossibleCallMatcher('.........').match(example_1)
+    assert PossibleCallMatcher('.').match(example_2)
+    assert PossibleCallMatcher('.........').match(example_2)
+
+    assert not PossibleCallMatcher('..').match(example_1)
+    assert not PossibleCallMatcher('.').match(example_1)
