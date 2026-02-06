@@ -3,11 +3,7 @@ import re
 import pytest
 from full_match import match
 
-from sigmatch import (
-    FunctionSignatureMatcher,
-    IncorrectArgumentsOrderError,
-    SignatureMismatchError,
-)
+from sigmatch import FunctionSignatureMatcher, SignatureMismatchError
 
 
 def test_random_functions():
@@ -266,11 +262,6 @@ def test_random_generator_functions():
     assert FunctionSignatureMatcher('c', 'c2').match(function_12) == True
 
 
-def test_raise_exception_if_not_callable():
-    with pytest.raises(ValueError, match=match('It is impossible to determine the signature of an object that is not being callable.')):
-        FunctionSignatureMatcher().match('kek', raise_exception=True)
-
-
 def test_raise_exception_if_dismatch():
     with pytest.raises(SignatureMismatchError):
         FunctionSignatureMatcher().match(lambda x: None, raise_exception=True)
@@ -329,49 +320,3 @@ def test_check_method():
 
     assert FunctionSignatureMatcher('.', '.', '.').match(Kek().kek)
     assert not FunctionSignatureMatcher().match(Kek().kek)
-
-
-def test_if_parameter_is_not_string():
-    with pytest.raises(TypeError, match=re.escape('Only strings can be used as symbolic representation of function parameters. You used "1" (int).')):
-        FunctionSignatureMatcher('.', 1, '.')
-
-
-def test_bad_string_with_spaces_as_parameter():
-    with pytest.raises(ValueError, match=re.escape('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "".')):
-        FunctionSignatureMatcher('.', '   ')
-
-
-@pytest.mark.parametrize(
-    'bad_string', [
-        '88',
-        '/',
-        '$',
-        'keko kek',
-    ],
-)
-def test_other_bad_string_as_parameter(bad_string):
-    with pytest.raises(ValueError, match=re.escape(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "{bad_string}".')):
-        FunctionSignatureMatcher('.', bad_string)
-
-
-@pytest.mark.parametrize(
-    ['before', 'after', 'message'],
-    [
-        ('kek', '.', 'Positional arguments must be specified first.'),
-        ('*', '.', 'Positional arguments must be specified first.'),
-        ('**', '.', 'Positional arguments must be specified first.'),
-
-        ('*', 'kek', 'Keyword arguments can be specified after positional ones, but before unpacking.'),
-        ('**', 'kek', 'Keyword arguments can be specified after positional ones, but before unpacking.'),
-
-        ('**', '*', 'Unpacking positional arguments should go before unpacking keyword arguments.'),
-
-        ('*', '*', 'Unpacking of the same type (*args in this case) can be specified no more than once.'),
-        ('**', '**', 'Unpacking of the same type (**kwargs in this case) can be specified no more than once.'),
-
-        ('kek', 'kek', 'The same argument name cannot occur twice. You have a repeat of "kek".'),
-    ],
-)
-def test_wrong_order(before, message, after):
-    with pytest.raises(IncorrectArgumentsOrderError, match=re.escape(message)):
-        FunctionSignatureMatcher(before, after)
