@@ -375,29 +375,3 @@ def test_other_bad_string_as_parameter(bad_string):
 def test_wrong_order(before, message, after):
     with pytest.raises(IncorrectArgumentsOrderError, match=re.escape(message)):
         FunctionSignatureMatcher(before, after)
-
-
-@pytest.mark.parametrize(
-    ['input', 'output'],
-    [
-        (['lol, kek'], ['lol', 'kek']),
-        (['., .'], ['.', '.']),
-        (['., *'], ['.', '*']),
-        (['., kek, *, **'], ['.', 'kek', '*', '**']),
-        (['., kek , *, **'], ['.', 'kek', '*', '**']),
-        (['., kek           , *, **'], ['.', 'kek', '*', '**']),
-
-        (['lol,kek'], ['lol', 'kek']),
-        (['.,.'], ['.', '.']),
-        (['.,*'], ['.', '*']),
-        (['.,kek,*,**'], ['.', 'kek', '*', '**']),
-        (['..,kek,*,**'], ['.', '.', 'kek', '*', '**']),
-
-        (['..'], ['.', '.']),
-        (['...., *'], ['.', '.', '.', '.', '*']),
-        (['...., ., *'], ['.', '.', '.', '.', '.', '*']),
-        (['..., kek, *, **'], ['.', '.', '.', 'kek', '*', '**']),
-    ],
-)
-def test_strings_with_multiple_items(input, output):
-    assert FunctionSignatureMatcher(*input).expected_signature == output

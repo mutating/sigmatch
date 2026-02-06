@@ -42,3 +42,29 @@ def test_repr(matcher_class):
     assert repr(matcher_class('*, **')) == f'{class_name}("*, **")'
     assert repr(matcher_class('**')) == f'{class_name}("**")'
     assert repr(matcher_class('..., kek, *, **')) == f'{class_name}("..., kek, *, **")'
+
+
+@pytest.mark.parametrize(
+    ['input', 'output'],
+    [
+        (['lol, kek'], ['lol', 'kek']),
+        (['., .'], ['.', '.']),
+        (['., *'], ['.', '*']),
+        (['., kek, *, **'], ['.', 'kek', '*', '**']),
+        (['., kek , *, **'], ['.', 'kek', '*', '**']),
+        (['., kek           , *, **'], ['.', 'kek', '*', '**']),
+
+        (['lol,kek'], ['lol', 'kek']),
+        (['.,.'], ['.', '.']),
+        (['.,*'], ['.', '*']),
+        (['.,kek,*,**'], ['.', 'kek', '*', '**']),
+        (['..,kek,*,**'], ['.', '.', 'kek', '*', '**']),
+
+        (['..'], ['.', '.']),
+        (['...., *'], ['.', '.', '.', '.', '*']),
+        (['...., ., *'], ['.', '.', '.', '.', '.', '*']),
+        (['..., kek, *, **'], ['.', '.', '.', 'kek', '*', '**']),
+    ],
+)
+def test_strings_with_multiple_items(input, output, matcher_class):
+    assert matcher_class(*input).expected_signature == output
