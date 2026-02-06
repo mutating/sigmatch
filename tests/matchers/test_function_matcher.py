@@ -92,9 +92,6 @@ def test_random_wrong_async_functions():
 
 
 def test_random_wrong_generator_functions():
-    """
-    Проверяем, что слепки сигнатур функций с неподходящими функциями не матчатся.
-    """
     def function_1():
         yield None
     def function_2(arg):
