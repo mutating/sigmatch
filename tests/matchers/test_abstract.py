@@ -119,3 +119,131 @@ def test_if_parameter_is_not_string(matcher_class):
 def test_raise_exception_if_not_callable(matcher_class):
     with pytest.raises(ValueError, match=match('It is impossible to determine the signature of an object that is not being callable.')):
         matcher_class().match('kek', raise_exception=True)
+
+
+def test_strict_match_for_random_functions(matcher_class):
+    def function_1():
+        pass
+    def function_2(arg):
+        pass
+    def function_3(**kwargs):
+        pass
+    def function_4(*args, **kwargs):
+        pass
+    def function_5(a, b):
+        pass
+    def function_6(a, b, c):
+        pass
+    def function_7(a, b, c=False):
+        pass
+    def function_8(a, b, c=False, *d):
+        pass
+    def function_9(a, b, c=False, *d, **e):
+        pass
+    def function_10(a, b, c=False, c2=False, *d, **e):
+        pass
+    def function_11(a, b, b2, c=False, c2=False, *d, **e):
+        pass
+    def function_12(c=False, c2=False):
+        pass
+
+    assert matcher_class().match(function_1) == True
+    assert matcher_class('.').match(function_2) == True
+    assert matcher_class('**').match(function_3) == True
+    assert matcher_class('*', '**').match(function_4) == True
+    assert matcher_class('.', '.').match(function_5) == True
+    assert matcher_class('.', '.', '.').match(function_6) == True
+    assert matcher_class('.', '.', 'c').match(function_7) == True
+    assert matcher_class('.', '.', 'c', '*').match(function_8) == True
+    assert matcher_class('.', '.', 'c', '*', '**').match(function_9) == True
+    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
+    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
+    assert matcher_class('c', 'c2').match(function_12) == True
+
+    assert matcher_class('.').match(lambda x: None) == True
+    assert matcher_class('.', '.').match(lambda x, y: None) == True
+    assert matcher_class('.', '*').match(lambda x, *y: None) == True
+    assert matcher_class('.', '**').match(lambda x, **y: None) == True
+
+
+def test_strict_match_random_async_functions(matcher_class):
+    async def function_1():
+        pass
+    async def function_2(arg):
+        pass
+    async def function_3(**kwargs):
+        pass
+    async def function_4(*args, **kwargs):
+        pass
+    async def function_5(a, b):
+        pass
+    async def function_6(a, b, c):
+        pass
+    async def function_7(a, b, c=False):
+        pass
+    async def function_8(a, b, c=False, *d):
+        pass
+    async def function_9(a, b, c=False, *d, **e):
+        pass
+    async def function_10(a, b, c=False, c2=False, *d, **e):
+        pass
+    async def function_11(a, b, b2, c=False, c2=False, *d, **e):
+        pass
+    async def function_12(c=False, c2=False):
+        pass
+
+    assert matcher_class().match(function_1) == True
+    assert matcher_class('.').match(function_2) == True
+    assert matcher_class('**').match(function_3) == True
+    assert matcher_class('*', '**').match(function_4) == True
+    assert matcher_class('.', '.').match(function_5) == True
+    assert matcher_class('.', '.', '.').match(function_6) == True
+    assert matcher_class('.', '.', 'c').match(function_7) == True
+    assert matcher_class('.', '.', 'c', '*').match(function_8) == True
+    assert matcher_class('.', '.', 'c', '*', '**').match(function_9) == True
+    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
+    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
+    assert matcher_class('c', 'c2').match(function_12) == True
+
+
+def test_strict_match_random_generator_functions(matcher_class):
+    """
+    Проверяем, что слепки сигнатур функций отрабатывают корректно.
+    """
+    def function_1():
+        yield None
+    def function_2(arg):
+        yield None
+    def function_3(**kwargs):
+        yield None
+    def function_4(*args, **kwargs):
+        yield None
+    def function_5(a, b):
+        yield None
+    def function_6(a, b, c):
+        yield None
+    def function_7(a, b, c=False):
+        yield None
+    def function_8(a, b, c=False, *d):
+        yield None
+    def function_9(a, b, c=False, *d, **e):
+        yield None
+    def function_10(a, b, c=False, c2=False, *d, **e):
+        yield None
+    def function_11(a, b, b2, c=False, c2=False, *d, **e):
+        yield None
+    def function_12(c=False, c2=False):
+        yield None
+
+    assert matcher_class().match(function_1) == True
+    assert matcher_class('.').match(function_2) == True
+    assert matcher_class('**').match(function_3) == True
+    assert matcher_class('*', '**').match(function_4) == True
+    assert matcher_class('.', '.').match(function_5) == True
+    assert matcher_class('.', '.', '.').match(function_6) == True
+    assert matcher_class('.', '.', 'c').match(function_7) == True
+    assert matcher_class('.', '.', 'c', '*').match(function_8) == True
+    assert matcher_class('.', '.', 'c', '*', '**').match(function_9) == True
+    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
+    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
+    assert matcher_class('c', 'c2').match(function_12) == True
