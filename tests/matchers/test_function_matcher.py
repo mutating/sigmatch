@@ -3,7 +3,7 @@ import re
 import pytest
 from full_match import match
 
-from sigmatch import FunctionSignatureMatcher, SignatureMismatchError
+from sigmatch import FunctionSignatureMatcher
 
 
 def test_random_wrong_functions():
