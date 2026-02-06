@@ -70,9 +70,6 @@ class AbstractSignatureMatcher(ABC):
         return result
 
     def _get_symbols_from_callable(self, function: Callable[..., Any]) -> List[str]:
-        if not callable(function):
-            raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
-
         try:
             function_signature: Optional[Signature] = signature(function)
             parameters = list(function_signature.parameters.values())
