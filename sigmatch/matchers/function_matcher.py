@@ -1,6 +1,7 @@
 from typing import Any, Callable
 
-from sigmatch.matchers.abstract import AbstractSignatureMatcher, SignatureNotFoundError
+from sigmatch import SignatureNotFoundError
+from sigmatch.matchers.abstract import AbstractSignatureMatcher
 
 
 class FunctionSignatureMatcher(AbstractSignatureMatcher):
