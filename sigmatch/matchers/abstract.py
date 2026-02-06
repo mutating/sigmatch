@@ -1,5 +1,5 @@
-from inspect import signature, Signature, Parameter
-from typing import Callable, List, Any, Optional
+from inspect import Parameter, Signature, signature
+from typing import Any, Callable, List, Optional
 
 from sigmatch.errors import IncorrectArgumentsOrderError
 
@@ -63,7 +63,7 @@ class AbstractSignatureMatcher:
         except ValueError as e:
             symbols = self._special_signature_search(function)
             if symbols is None:
-                raise ValueError() from e
+                raise ValueError from e
 
         return symbols
 
@@ -95,11 +95,9 @@ class AbstractSignatureMatcher:
         return result
 
     def _special_signature_search(self, function: Callable[..., Any]) -> Optional[List[str]]:
-        if function is next:
+        if function is next or function is anext:
             return ['.', '?']
-        elif function is anext:
-            return ['.', '?']
-        elif function is bool:
+        if function is bool:
             return ['?']
 
         return None

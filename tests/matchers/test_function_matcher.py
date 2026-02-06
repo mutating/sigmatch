@@ -3,7 +3,11 @@ import re
 import pytest
 from full_match import match
 
-from sigmatch import FunctionSignatureMatcher, SignatureMismatchError, IncorrectArgumentsOrderError
+from sigmatch import (
+    FunctionSignatureMatcher,
+    IncorrectArgumentsOrderError,
+    SignatureMismatchError,
+)
 
 
 def test_random_functions():
@@ -354,7 +358,7 @@ def test_bad_string_with_spaces_as_parameter():
         '/',
         '$',
         'keko kek',
-    ]
+    ],
 )
 def test_other_bad_string_as_parameter(bad_string):
     with pytest.raises(ValueError, match=re.escape(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "{bad_string}".')):
