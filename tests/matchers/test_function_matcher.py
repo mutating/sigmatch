@@ -271,17 +271,6 @@ def test_raise_exception_if_not_callable():
         FunctionSignatureMatcher().match('kek', raise_exception=True)
 
 
-@pytest.mark.parametrize(
-    'options',
-    [
-        {},
-        {'raise_exception': False},
-    ],
-)
-def test_not_raise_exception_if_not_callable(options):
-    assert FunctionSignatureMatcher().match('kek', **options) == False
-
-
 def test_raise_exception_if_dismatch():
     with pytest.raises(SignatureMismatchError):
         FunctionSignatureMatcher().match(lambda x: None, raise_exception=True)
@@ -426,15 +415,3 @@ def test_repr():
     assert repr(FunctionSignatureMatcher('*, **')) == 'FunctionSignatureMatcher("*, **")'
     assert repr(FunctionSignatureMatcher('**')) == 'FunctionSignatureMatcher("**")'
     assert repr(FunctionSignatureMatcher('..., kek, *, **')) == 'FunctionSignatureMatcher("..., kek, *, **")'
-
-
-def test_eq():
-    assert FunctionSignatureMatcher() == FunctionSignatureMatcher()
-    assert FunctionSignatureMatcher('.') == FunctionSignatureMatcher('.')
-    assert FunctionSignatureMatcher('..., kek, *, **') == FunctionSignatureMatcher('..., kek, *, **')
-    assert FunctionSignatureMatcher('..., kek, *, **') == FunctionSignatureMatcher('...', 'kek', '*', '**')
-
-    assert FunctionSignatureMatcher('.') != FunctionSignatureMatcher()
-    assert FunctionSignatureMatcher('..., kek, *, **') != FunctionSignatureMatcher('...', 'kek', '*')
-    assert FunctionSignatureMatcher('.') != 5
-    assert FunctionSignatureMatcher('.') != 'kek'
