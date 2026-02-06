@@ -72,23 +72,23 @@ def test_random_wrong_async_functions():
     async def function_12(c=False, c2=False):
         pass
 
-    assert FunctionSignatureMatcher('.').match(function_1) == False
-    assert FunctionSignatureMatcher('c').match(function_2) == False
-    assert FunctionSignatureMatcher('.', '**').match(function_3) == False
-    assert FunctionSignatureMatcher('.', '**').match(function_4) == False
-    assert FunctionSignatureMatcher('.', 'c').match(function_5) == False
-    assert FunctionSignatureMatcher('.', '.').match(function_6) == False
-    assert FunctionSignatureMatcher('.', '.').match(function_7) == False
-    assert FunctionSignatureMatcher('.', '.', 'c').match(function_8) == False
-    assert FunctionSignatureMatcher('.', 'c', '*', '**').match(function_9) == False
-    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_10) == False
-    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_11) == False
-    assert FunctionSignatureMatcher('c').match(function_12) == False
+    assert not FunctionSignatureMatcher('.').match(function_1)
+    assert not FunctionSignatureMatcher('c').match(function_2)
+    assert not FunctionSignatureMatcher('.', '**').match(function_3)
+    assert not FunctionSignatureMatcher('.', '**').match(function_4)
+    assert not FunctionSignatureMatcher('.', 'c').match(function_5)
+    assert not FunctionSignatureMatcher('.', '.').match(function_6)
+    assert not FunctionSignatureMatcher('.', '.').match(function_7)
+    assert not FunctionSignatureMatcher('.', '.', 'c').match(function_8)
+    assert not FunctionSignatureMatcher('.', 'c', '*', '**').match(function_9)
+    assert not FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_10)
+    assert not FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_11)
+    assert not FunctionSignatureMatcher('c').match(function_12)
 
-    assert FunctionSignatureMatcher().match(lambda x: None) == False
-    assert FunctionSignatureMatcher('.').match(lambda x, y: None) == False
-    assert FunctionSignatureMatcher('*').match(lambda x, *y: None) == False
-    assert FunctionSignatureMatcher('**').match(lambda x, **y: None) == False
+    assert not FunctionSignatureMatcher().match(lambda x: None)
+    assert not FunctionSignatureMatcher('.').match(lambda x, y: None)
+    assert not FunctionSignatureMatcher('*').match(lambda x, *y: None)
+    assert not FunctionSignatureMatcher('**').match(lambda x, **y: None)
 
 
 def test_random_wrong_generator_functions():
@@ -120,15 +120,15 @@ def test_random_wrong_generator_functions():
     def function_12(c=False, c2=False):
         yield None
 
-    assert FunctionSignatureMatcher('.').match(function_1) == False
-    assert FunctionSignatureMatcher('c').match(function_2) == False
-    assert FunctionSignatureMatcher('.', '**').match(function_3) == False
-    assert FunctionSignatureMatcher('.', '**').match(function_4) == False
-    assert FunctionSignatureMatcher('.', 'c').match(function_5) == False
-    assert FunctionSignatureMatcher('.', '.').match(function_6) == False
-    assert FunctionSignatureMatcher('.', '.').match(function_7) == False
-    assert FunctionSignatureMatcher('.', '.', 'c').match(function_8) == False
-    assert FunctionSignatureMatcher('.', 'c', '*', '**').match(function_9) == False
-    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_10) == False
-    assert FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_11) == False
-    assert FunctionSignatureMatcher('c').match(function_12) == False
+    assert not FunctionSignatureMatcher('.').match(function_1)
+    assert not FunctionSignatureMatcher('c').match(function_2)
+    assert not FunctionSignatureMatcher('.', '**').match(function_3)
+    assert not FunctionSignatureMatcher('.', '**').match(function_4)
+    assert not FunctionSignatureMatcher('.', 'c').match(function_5)
+    assert not FunctionSignatureMatcher('.', '.').match(function_6)
+    assert not FunctionSignatureMatcher('.', '.').match(function_7)
+    assert not FunctionSignatureMatcher('.', '.', 'c').match(function_8)
+    assert not FunctionSignatureMatcher('.', 'c', '*', '**').match(function_9)
+    assert not FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_10)
+    assert not FunctionSignatureMatcher('.', '.', 'c2', '*', '**').match(function_11)
+    assert not FunctionSignatureMatcher('c').match(function_12)
