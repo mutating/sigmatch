@@ -51,7 +51,7 @@ class AbstractSignatureMatcher(ABC):
 
     @abstractmethod
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
-        ...
+        ...  # pragma: no cover
 
     def _convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
         result = []
