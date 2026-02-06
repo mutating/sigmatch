@@ -1,7 +1,7 @@
 import pytest
 from full_match import match
 
-from sigmatch import PossibleCallMatcher
+from sigmatch import PossibleCallMatcher, SignatureMismatchError
 
 
 def test_there_should_be_star_in_signature_if_call_contains_it():
@@ -30,6 +30,15 @@ def test_number_of_dots_in_call_cant_be_less_than_in_signature_if_signature_cont
     assert not PossibleCallMatcher('.., *').match(example)
     assert not PossibleCallMatcher('*').match(example)
     assert not PossibleCallMatcher('., *').match(example)
+
+    with pytest.raises(SignatureMismatchError, match=match('This is a difficult situation, there is no guarantee that a call with a variable number of positional arguments will fill all the slots of positional arguments.')):
+        PossibleCallMatcher('.., *').match(example, raise_exception=True)
+
+    with pytest.raises(SignatureMismatchError, match=match('This is a difficult situation, there is no guarantee that a call with a variable number of positional arguments will fill all the slots of positional arguments.')):
+        PossibleCallMatcher('*').match(example, raise_exception=True)
+
+    with pytest.raises(SignatureMismatchError, match=match('This is a difficult situation, there is no guarantee that a call with a variable number of positional arguments will fill all the slots of positional arguments.')):
+        PossibleCallMatcher('., *').match(example, raise_exception=True)
 
 
 def test_dots_number_in_call_has_be_equal_to_signatures_one_if_signature_and_call_doesnt_contain_star():
