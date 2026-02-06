@@ -366,7 +366,7 @@ def test_other_bad_string_as_parameter(bad_string):
 
 
 @pytest.mark.parametrize(
-    'before,after,message',
+    ['before', 'after', 'message'],
     [
         ('kek', '.', 'Positional arguments must be specified first.'),
         ('*', '.', 'Positional arguments must be specified first.'),
@@ -389,7 +389,7 @@ def test_wrong_order(before, message, after):
 
 
 @pytest.mark.parametrize(
-    'input,output',
+    ['input', 'output'],
     [
         (['lol, kek'], ['lol', 'kek']),
         (['., .'], ['.', '.']),
@@ -434,7 +434,7 @@ def test_eq():
     assert FunctionSignatureMatcher('..., kek, *, **') == FunctionSignatureMatcher('..., kek, *, **')
     assert FunctionSignatureMatcher('..., kek, *, **') == FunctionSignatureMatcher('...', 'kek', '*', '**')
 
-    assert not (FunctionSignatureMatcher('.') == FunctionSignatureMatcher())
-    assert not (FunctionSignatureMatcher('..., kek, *, **') == FunctionSignatureMatcher('...', 'kek', '*'))
-    assert not (FunctionSignatureMatcher('.') == 5)
-    assert not (FunctionSignatureMatcher('.') == 'kek')
+    assert FunctionSignatureMatcher('.') != FunctionSignatureMatcher()
+    assert FunctionSignatureMatcher('..., kek, *, **') != FunctionSignatureMatcher('...', 'kek', '*')
+    assert FunctionSignatureMatcher('.') != 5
+    assert FunctionSignatureMatcher('.') != 'kek'
