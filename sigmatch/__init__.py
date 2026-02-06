@@ -8,5 +8,5 @@ from sigmatch.matchers.function_matcher import (
     FunctionSignatureMatcher as FunctionSignatureMatcher,
 )
 from sigmatch.matchers.possible_call_matcher import (
-    FunctionSignatureMatcher as PossibleCallMatcher,  # noqa: F401
+    PossibleCallMatcher as PossibleCallMatcher,  # noqa: F401
 )
