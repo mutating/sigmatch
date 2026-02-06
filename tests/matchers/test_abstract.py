@@ -147,23 +147,23 @@ def test_strict_match_for_random_functions(matcher_class):
     def function_12(c=False, c2=False):
         pass
 
-    assert matcher_class().match(function_1) == True
-    assert matcher_class('.').match(function_2) == True
-    assert matcher_class('**').match(function_3) == True
-    assert matcher_class('*', '**').match(function_4) == True
-    assert matcher_class('.', '.').match(function_5) == True
-    assert matcher_class('.', '.', '.').match(function_6) == True
-    assert matcher_class('.', '.', 'c').match(function_7) == True
-    assert matcher_class('.', '.', 'c', '*').match(function_8) == True
-    assert matcher_class('.', '.', 'c', '*', '**').match(function_9) == True
-    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
-    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
-    assert matcher_class('c', 'c2').match(function_12) == True
+    assert matcher_class().match(function_1)
+    assert matcher_class('.').match(function_2)
+    assert matcher_class('**').match(function_3)
+    assert matcher_class('*', '**').match(function_4)
+    assert matcher_class('.', '.').match(function_5)
+    assert matcher_class('.', '.', '.').match(function_6)
+    assert matcher_class('.', '.', 'c').match(function_7)
+    assert matcher_class('.', '.', 'c', '*').match(function_8)
+    assert matcher_class('.', '.', 'c', '*', '**').match(function_9)
+    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10)
+    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11)
+    assert matcher_class('c', 'c2').match(function_12)
 
-    assert matcher_class('.').match(lambda x: None) == True
-    assert matcher_class('.', '.').match(lambda x, y: None) == True
-    assert matcher_class('.', '*').match(lambda x, *y: None) == True
-    assert matcher_class('.', '**').match(lambda x, **y: None) == True
+    assert matcher_class('.').match(lambda x: None)
+    assert matcher_class('.', '.').match(lambda x, y: None)
+    assert matcher_class('.', '*').match(lambda x, *y: None)
+    assert matcher_class('.', '**').match(lambda x, **y: None)
 
 
 def test_strict_match_random_async_functions(matcher_class):
@@ -192,24 +192,21 @@ def test_strict_match_random_async_functions(matcher_class):
     async def function_12(c=False, c2=False):
         pass
 
-    assert matcher_class().match(function_1) == True
-    assert matcher_class('.').match(function_2) == True
-    assert matcher_class('**').match(function_3) == True
-    assert matcher_class('*', '**').match(function_4) == True
-    assert matcher_class('.', '.').match(function_5) == True
-    assert matcher_class('.', '.', '.').match(function_6) == True
-    assert matcher_class('.', '.', 'c').match(function_7) == True
-    assert matcher_class('.', '.', 'c', '*').match(function_8) == True
-    assert matcher_class('.', '.', 'c', '*', '**').match(function_9) == True
-    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
-    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
-    assert matcher_class('c', 'c2').match(function_12) == True
+    assert matcher_class().match(function_1)
+    assert matcher_class('.').match(function_2)
+    assert matcher_class('**').match(function_3)
+    assert matcher_class('*', '**').match(function_4)
+    assert matcher_class('.', '.').match(function_5)
+    assert matcher_class('.', '.', '.').match(function_6)
+    assert matcher_class('.', '.', 'c').match(function_7)
+    assert matcher_class('.', '.', 'c', '*').match(function_8)
+    assert matcher_class('.', '.', 'c', '*', '**').match(function_9)
+    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10)
+    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11)
+    assert matcher_class('c', 'c2').match(function_12)
 
 
 def test_strict_match_random_generator_functions(matcher_class):
-    """
-    Проверяем, что слепки сигнатур функций отрабатывают корректно.
-    """
     def function_1():
         yield None
     def function_2(arg):
@@ -235,15 +232,15 @@ def test_strict_match_random_generator_functions(matcher_class):
     def function_12(c=False, c2=False):
         yield None
 
-    assert matcher_class().match(function_1) == True
-    assert matcher_class('.').match(function_2) == True
-    assert matcher_class('**').match(function_3) == True
-    assert matcher_class('*', '**').match(function_4) == True
-    assert matcher_class('.', '.').match(function_5) == True
-    assert matcher_class('.', '.', '.').match(function_6) == True
-    assert matcher_class('.', '.', 'c').match(function_7) == True
-    assert matcher_class('.', '.', 'c', '*').match(function_8) == True
-    assert matcher_class('.', '.', 'c', '*', '**').match(function_9) == True
-    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10) == True
-    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11) == True
-    assert matcher_class('c', 'c2').match(function_12) == True
+    assert matcher_class().match(function_1)
+    assert matcher_class('.').match(function_2)
+    assert matcher_class('**').match(function_3)
+    assert matcher_class('*', '**').match(function_4)
+    assert matcher_class('.', '.').match(function_5)
+    assert matcher_class('.', '.', '.').match(function_6)
+    assert matcher_class('.', '.', 'c').match(function_7)
+    assert matcher_class('.', '.', 'c', '*').match(function_8)
+    assert matcher_class('.', '.', 'c', '*', '**').match(function_9)
+    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10)
+    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11)
+    assert matcher_class('c', 'c2').match(function_12)
