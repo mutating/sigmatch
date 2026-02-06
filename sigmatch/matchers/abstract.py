@@ -123,7 +123,7 @@ class AbstractSignatureMatcher(ABC):
         all_met_names = set()
 
         for item in expected_signature:
-            if not item.isidentifier() and item not in ('.', '*', '**'):
+            if not item.isidentifier() and item not in ('.', '*', '**', '?'):
                 raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "{item}".')
 
             if item == '.':
