@@ -6,7 +6,7 @@ from sigmatch.matchers.abstract import AbstractSignatureMatcher
 
 
 class PossibleCallMatcher(AbstractSignatureMatcher):
-    def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
+    def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         """
         1. Если способ вызова содержит *:
         1.1. В сигнатуре функции тоже должна быть *, иначе не валидно
@@ -27,11 +27,6 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         4.1. Если сигнатура не содержит **, именные аргументы сигнатуры и способа вызова должны строго совпадать (не больше и не меньше)
         4.2. Если сигнатура содержит **, в ней не должно быть других обязательных аргументов кроме x и y
         """
-        if not callable(function):
-            if raise_exception:
-                raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
-            return False
-
         callable_matcher = FunctionSignatureMatcher(*self._get_symbols_from_callable(function))
 
         result = True
@@ -62,8 +57,6 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         elif set(self.names_of_named_args) != set(callable_matcher.names_of_named_args):
             result = False
 
-        if not result and raise_exception:
-            raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
 
 

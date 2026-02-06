@@ -1,10 +1,11 @@
+from abc import ABC, abstractmethod
 from inspect import Parameter, Signature, signature
 from typing import Any, Callable, List, Optional
 
-from sigmatch.errors import IncorrectArgumentsOrderError
+from sigmatch.errors import IncorrectArgumentsOrderError, SignatureMismatchError
 
 
-class AbstractSignatureMatcher:
+class AbstractSignatureMatcher(ABC):
     def __init__(self, *args: str) -> None:
         for item in args:
             if not isinstance(item, str):
@@ -35,6 +36,22 @@ class AbstractSignatureMatcher:
             return False
 
         return self.expected_signature == other.expected_signature
+
+    def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
+        if not callable(function):
+            if raise_exception:
+                raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
+            return False
+
+        result = self._match(function, raise_exception=raise_exception)
+
+        if not result and raise_exception:
+            raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
+        return result
+
+    @abstractmethod
+    def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
+        ...
 
     def _convert_symbols(self, args: Tuple[str, ...]) -> List[str]:
         result = []
