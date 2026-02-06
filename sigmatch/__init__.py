@@ -4,6 +4,9 @@ from sigmatch.errors import (
 from sigmatch.errors import (
     SignatureMismatchError as SignatureMismatchError,
 )
+from sigmatch.errors import (
+    SignatureNotFoundError as SignatureNotFoundError,
+)
 from sigmatch.matchers.function_matcher import (
     FunctionSignatureMatcher as FunctionSignatureMatcher,
 )

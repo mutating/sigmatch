@@ -19,7 +19,8 @@ class AbstractSignatureMatcher(ABC):
         self.number_of_position_args = len([x for x in symbols if x == '.'])
         self.number_of_named_args = len([x for x in symbols if x.isidentifier()])
         self.names_of_named_args = list(set([x for x in symbols if x.isidentifier()]))
-        self.number_of_question_marks = len([x for x in symbols if x == '?'])
+
+        self.is_wrong = False
 
     def __repr__(self) -> str:
         positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
@@ -50,6 +51,21 @@ class AbstractSignatureMatcher(ABC):
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
 
+    @classmethod
+    def from_callable(cls, function: Callable[..., Any], raise_exception: bool = False) -> 'AbstractSignatureMatcher':
+        error = True
+        try:
+            symbols = cls._get_symbols_from_callable(function)
+            error = False
+        except Exception:
+            symbols = []
+        finally:
+            if error and raise_exception:
+                raise SignatureNotFoundError('For some functions, it is not possible to extract the signature, and this is one of them.')
+            result = cls(*symbols)
+            result.is_wrong = error
+            return result
+
     @abstractmethod
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         ...  # pragma: no cover
@@ -70,19 +86,15 @@ class AbstractSignatureMatcher(ABC):
         self._check_expected_signature(result)
         return result
 
-    def _get_symbols_from_callable(self, function: Callable[..., Any], raise_exception: bool = False) -> List[str]:
-        try:
-            function_signature: Optional[Signature] = signature(function)
-            parameters = list(function_signature.parameters.values())
-            symbols = self._convert_parameters_to_symbols(parameters)
-        except ValueError as e:
-            if raise_exception:
-                raise SignatureNotFoundError('For some functions, it is not possible to extract the signature, and this is one of them.')
-            return []
-
+    @classmethod
+    def _get_symbols_from_callable(cls, function: Callable[..., Any]) -> List[str]:
+        function_signature: Optional[Signature] = signature(function)
+        parameters = list(function_signature.parameters.values())
+        symbols = cls._convert_parameters_to_symbols(parameters)
         return symbols
 
-    def _convert_parameters_to_symbols(self, parameters: List[Parameter]) -> List[str]:
+    @staticmethod
+    def _convert_parameters_to_symbols(parameters: List[Parameter]) -> List[str]:
         result = []
 
         for parameter in parameters:

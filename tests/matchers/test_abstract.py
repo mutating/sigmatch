@@ -102,12 +102,12 @@ def test_wrong_order(before, message, after, matcher_class):
     ],
 )
 def test_other_bad_string_as_parameter(bad_string, matcher_class):
-    with pytest.raises(ValueError, match=match(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "{bad_string}".')):
+    with pytest.raises(ValueError, match=match(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{bad_string}".')):
         matcher_class('.', bad_string)
 
 
 def test_bad_string_with_spaces_as_parameter(matcher_class):
-    with pytest.raises(ValueError, match=match('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "".')):
+    with pytest.raises(ValueError, match=match('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "".')):
         matcher_class('.', '   ')
 
 
