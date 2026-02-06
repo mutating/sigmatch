@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from inspect import Parameter, Signature, signature
 from typing import Any, Callable, List, Optional
 
-from sigmatch.errors import IncorrectArgumentsOrderError, SignatureMismatchError
+from sigmatch.errors import IncorrectArgumentsOrderError, SignatureMismatchError, SignatureNotFoundError
 
 
 class AbstractSignatureMatcher(ABC):
@@ -19,6 +19,7 @@ class AbstractSignatureMatcher(ABC):
         self.number_of_position_args = len([x for x in symbols if x == '.'])
         self.number_of_named_args = len([x for x in symbols if x.isidentifier()])
         self.names_of_named_args = list(set([x for x in symbols if x.isidentifier()]))
+        self.number_of_question_marks = len([x for x in symbols if x == '?'])
 
     def __repr__(self) -> str:
         positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
@@ -69,15 +70,15 @@ class AbstractSignatureMatcher(ABC):
         self._check_expected_signature(result)
         return result
 
-    def _get_symbols_from_callable(self, function: Callable[..., Any]) -> List[str]:
+    def _get_symbols_from_callable(self, function: Callable[..., Any], raise_exception: bool = False) -> List[str]:
         try:
             function_signature: Optional[Signature] = signature(function)
             parameters = list(function_signature.parameters.values())
             symbols = self._convert_parameters_to_symbols(parameters)
         except ValueError as e:
-            symbols = self._special_signature_search(function)
-            if symbols is None:
-                raise ValueError from e
+            if raise_exception:
+                raise SignatureNotFoundError('For some functions, it is not possible to extract the signature, and this is one of them.')
+            return []
 
         return symbols
 
@@ -108,14 +109,6 @@ class AbstractSignatureMatcher(ABC):
 
         return result
 
-    def _special_signature_search(self, function: Callable[..., Any]) -> Optional[List[str]]:
-        if function is next or function is anext:
-            return ['.', '?']
-        if function is bool:
-            return ['?']
-
-        return None
-
     def _check_expected_signature(self, expected_signature: List[str]) -> None:
         met_name = False
         met_star = False
@@ -123,8 +116,8 @@ class AbstractSignatureMatcher(ABC):
         all_met_names = set()
 
         for item in expected_signature:
-            if not item.isidentifier() and item not in ('.', '*', '**', '?'):
-                raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**", "?" strings. You used "{item}".')
+            if not item.isidentifier() and item not in ('.', '*', '**'):
+                raise ValueError(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{item}".')
 
             if item == '.':
                 if met_name or met_star or met_double_star:

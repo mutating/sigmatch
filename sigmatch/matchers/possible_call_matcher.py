@@ -7,7 +7,7 @@ from sigmatch.matchers.abstract import AbstractSignatureMatcher
 
 class PossibleCallMatcher(AbstractSignatureMatcher):
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
-        callable_matcher = FunctionSignatureMatcher(*self._get_symbols_from_callable(function))
+        callable_matcher = FunctionSignatureMatcher(*self._get_symbols_from_callable(function, raise_exception=raise_exception))
 
         result = True
 
