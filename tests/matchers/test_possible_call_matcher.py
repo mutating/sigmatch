@@ -56,3 +56,27 @@ def test_dots_number_in_call_has_be_equal_or_more_to_signatures_one_if_call_does
 
     assert not PossibleCallMatcher('..').match(example_1)
     assert not PossibleCallMatcher('.').match(example_1)
+
+
+def test_signature_has_to_contain_2stars_if_call_contains_2stars():
+    def example_1(a, b, c, **args): ...
+    def example_2(a, b, c=None, **args): ...
+    def example_3(**args): ...
+
+    def bad_example_1(a, b, c): ...
+    def bad_example_2(a, b, c=None): ...
+    def bad_example_3(): ...
+
+    assert PossibleCallMatcher('..., **').match(example_1)
+    assert PossibleCallMatcher('.., c, **').match(example_2)
+    assert PossibleCallMatcher('**').match(example_3)
+    assert PossibleCallMatcher('c, **').match(example_3)
+    assert PossibleCallMatcher('a, b, c, **').match(example_3)
+
+    assert not PossibleCallMatcher('**').match(bad_example_1)
+    assert not PossibleCallMatcher('**').match(bad_example_2)
+    assert not PossibleCallMatcher('**').match(bad_example_3)
+
+    assert not PossibleCallMatcher('..., **').match(bad_example_1)
+    assert not PossibleCallMatcher('.., c, **').match(bad_example_2)
+    assert not PossibleCallMatcher('**').match(bad_example_3)
