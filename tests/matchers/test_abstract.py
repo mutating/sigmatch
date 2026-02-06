@@ -26,3 +26,19 @@ def test_eq_the_same_class_other_objects(matcher_class):
     assert matcher_class('.') != 5
     assert matcher_class('.') != 'kek'
     assert FunctionSignatureMatcher() != PossibleCallMatcher()
+
+
+def test_repr(matcher_class):
+    class_name = matcher_class.__name__
+
+    assert repr(matcher_class()) == f'{class_name}()'
+    assert repr(matcher_class('.')) == f'{class_name}(".")'
+    assert repr(matcher_class('...')) == f'{class_name}("...")'
+    assert repr(matcher_class('..., kek')) == f'{class_name}("..., kek")'
+    assert repr(matcher_class('kek')) == f'{class_name}("kek")'
+    assert repr(matcher_class('kek, lol')) == f'{class_name}("kek, lol")'
+    assert repr(matcher_class('kek, lol, *')) == f'{class_name}("kek, lol, *")'
+    assert repr(matcher_class('*')) == f'{class_name}("*")'
+    assert repr(matcher_class('*, **')) == f'{class_name}("*, **")'
+    assert repr(matcher_class('**')) == f'{class_name}("**")'
+    assert repr(matcher_class('..., kek, *, **')) == f'{class_name}("..., kek, *, **")'

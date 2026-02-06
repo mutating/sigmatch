@@ -401,17 +401,3 @@ def test_wrong_order(before, message, after):
 )
 def test_strings_with_multiple_items(input, output):
     assert FunctionSignatureMatcher(*input).expected_signature == output
-
-
-def test_repr():
-    assert repr(FunctionSignatureMatcher()) == 'FunctionSignatureMatcher()'
-    assert repr(FunctionSignatureMatcher('.')) == 'FunctionSignatureMatcher(".")'
-    assert repr(FunctionSignatureMatcher('...')) == 'FunctionSignatureMatcher("...")'
-    assert repr(FunctionSignatureMatcher('..., kek')) == 'FunctionSignatureMatcher("..., kek")'
-    assert repr(FunctionSignatureMatcher('kek')) == 'FunctionSignatureMatcher("kek")'
-    assert repr(FunctionSignatureMatcher('kek, lol')) == 'FunctionSignatureMatcher("kek, lol")'
-    assert repr(FunctionSignatureMatcher('kek, lol, *')) == 'FunctionSignatureMatcher("kek, lol, *")'
-    assert repr(FunctionSignatureMatcher('*')) == 'FunctionSignatureMatcher("*")'
-    assert repr(FunctionSignatureMatcher('*, **')) == 'FunctionSignatureMatcher("*, **")'
-    assert repr(FunctionSignatureMatcher('**')) == 'FunctionSignatureMatcher("**")'
-    assert repr(FunctionSignatureMatcher('..., kek, *, **')) == 'FunctionSignatureMatcher("..., kek, *, **")'
