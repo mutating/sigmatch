@@ -36,7 +36,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
                 result = False
             if callable_matcher.number_of_position_args and (self.number_of_position_args < callable_matcher.number_of_position_args):
                 if raise_exception:
-                    raise SignatureMismatchError
+                    raise SignatureMismatchError('This is a difficult situation, there is no guarantee that a call with a variable number of positional arguments will fill all the slots of positional arguments.')
                 result = False
         elif callable_matcher.is_args:
             if self.number_of_position_args < callable_matcher.number_of_position_args:
