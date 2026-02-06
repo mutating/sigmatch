@@ -1,7 +1,7 @@
 import pytest
 from full_match import match
 
-from sigmatch import PossibleCallMatcher, SignatureMismatchError, SignatureNotFoundError
+from sigmatch import PossibleCallMatcher, SignatureMismatchError
 
 
 def test_there_should_be_star_in_signature_if_call_contains_it():
@@ -140,18 +140,3 @@ def test_signature_contains_only_known_named_arguments_if_call_dont_contain_2sta
     assert not PossibleCallMatcher('a, c').match(example)
     assert not PossibleCallMatcher('b, c').match(example)
     assert not PossibleCallMatcher().match(example)
-
-
-@pytest.mark.parametrize(
-    ['function'],
-    [
-        (next,),
-    ],
-)
-def test_special_functions(function):
-    assert not PossibleCallMatcher('.').match(function)
-    assert not PossibleCallMatcher().match(function)
-    assert not PossibleCallMatcher('..').match(function)
-
-    with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
-        PossibleCallMatcher('.').match(function, raise_exception=True)

@@ -1,7 +1,7 @@
 import pytest
 from full_match import match
 
-from sigmatch import FunctionSignatureMatcher, PossibleCallMatcher, IncorrectArgumentsOrderError, SignatureMismatchError
+from sigmatch import FunctionSignatureMatcher, PossibleCallMatcher, IncorrectArgumentsOrderError, SignatureMismatchError, SignatureNotFoundError
 
 
 def test_match_not_callable(matcher_class):
@@ -304,3 +304,18 @@ def test_check_method(matcher_class):
 
     assert matcher_class('.', '.', '.').match(Kek().kek)
     assert not matcher_class().match(Kek().kek)
+
+
+@pytest.mark.parametrize(
+    ['function'],
+    [
+        (next,),
+    ],
+)
+def test_special_functions(function, matcher_class):
+    assert not matcher_class('.').match(function)
+    assert not matcher_class().match(function)
+    assert not matcher_class('..').match(function)
+
+    with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
+        matcher_class('.').match(function, raise_exception=True)

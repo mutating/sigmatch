@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from inspect import Parameter, Signature, signature
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Tuple, Optional
 
 from sigmatch.errors import IncorrectArgumentsOrderError, SignatureMismatchError, SignatureNotFoundError
 
@@ -57,14 +57,13 @@ class AbstractSignatureMatcher(ABC):
         try:
             symbols = cls._get_symbols_from_callable(function)
             error = False
-        except Exception:
+        except Exception as e:
+            if raise_exception:
+                raise e
             symbols = []
-        finally:
-            if error and raise_exception:
-                raise SignatureNotFoundError('For some functions, it is not possible to extract the signature, and this is one of them.')
-            result = cls(*symbols)
-            result.is_wrong = error
-            return result
+        result = cls(*symbols)
+        result.is_wrong = error
+        return result
 
     @abstractmethod
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
@@ -88,10 +87,13 @@ class AbstractSignatureMatcher(ABC):
 
     @classmethod
     def _get_symbols_from_callable(cls, function: Callable[..., Any]) -> List[str]:
-        function_signature: Optional[Signature] = signature(function)
-        parameters = list(function_signature.parameters.values())
-        symbols = cls._convert_parameters_to_symbols(parameters)
-        return symbols
+        try:
+            function_signature: Optional[Signature] = signature(function)
+            parameters = list(function_signature.parameters.values())
+            symbols = cls._convert_parameters_to_symbols(parameters)
+            return symbols
+        except ValueError as e:
+            raise SignatureNotFoundError('For some functions, it is not possible to extract the signature, and this is one of them.') from e
 
     @staticmethod
     def _convert_parameters_to_symbols(parameters: List[Parameter]) -> List[str]:
