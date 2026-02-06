@@ -1,8 +1,12 @@
 from abc import ABC, abstractmethod
 from inspect import Parameter, Signature, signature
-from typing import Any, Callable, List, Tuple, Optional
+from typing import Any, Callable, List, Optional, Tuple
 
-from sigmatch.errors import IncorrectArgumentsOrderError, SignatureMismatchError, SignatureNotFoundError
+from sigmatch.errors import (
+    IncorrectArgumentsOrderError,
+    SignatureMismatchError,
+    SignatureNotFoundError,
+)
 
 
 class AbstractSignatureMatcher(ABC):

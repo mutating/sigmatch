@@ -1,7 +1,13 @@
 import pytest
 from full_match import match
 
-from sigmatch import FunctionSignatureMatcher, PossibleCallMatcher, IncorrectArgumentsOrderError, SignatureMismatchError, SignatureNotFoundError
+from sigmatch import (
+    FunctionSignatureMatcher,
+    IncorrectArgumentsOrderError,
+    PossibleCallMatcher,
+    SignatureMismatchError,
+    SignatureNotFoundError,
+)
 
 
 def test_match_not_callable(matcher_class):
@@ -307,9 +313,9 @@ def test_check_method(matcher_class):
 
 
 @pytest.mark.parametrize(
-    ['function'],
+    'function',
     [
-        (next,),
+        next,
     ],
 )
 def test_special_functions(function, matcher_class):
