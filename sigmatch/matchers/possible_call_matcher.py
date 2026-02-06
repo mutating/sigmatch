@@ -41,7 +41,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
                 result = False
             if callable_matcher.number_of_position_args and (self.number_of_position_args < callable_matcher.number_of_position_args):
                 if raise_exception:
-                    raise SignatureMismatchError()
+                    raise SignatureMismatchError
                 result = False
         elif callable_matcher.is_args:
             if self.number_of_position_args < callable_matcher.number_of_position_args:
