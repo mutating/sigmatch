@@ -14,19 +14,6 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
 
         result = True
 
-        if self.is_args:
-            if not callable_matcher.is_args:
-                result = False
-            if callable_matcher.number_of_position_args and (self.number_of_position_args < callable_matcher.number_of_position_args):
-                if raise_exception:
-                    raise SignatureMismatchError('This is a difficult situation, there is no guarantee that a call with a variable number of positional arguments will fill all the slots of positional arguments.')
-                result = False
-        elif callable_matcher.is_args:
-            if self.number_of_position_args < callable_matcher.number_of_position_args:
-                result = False
-        elif self.number_of_position_args != callable_matcher.number_of_position_args:
-            result = False
-
         if self.is_kwargs and not callable_matcher.is_kwargs:
             result = False
 
@@ -38,6 +25,19 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
                     break
 
         elif set(self.names_of_named_args) != set(callable_matcher.names_of_named_args):
+            result = False
+
+        if self.is_args:
+            if not callable_matcher.is_args:
+                result = False
+            if callable_matcher.number_of_position_args and (self.number_of_position_args < callable_matcher.number_of_position_args):
+                if raise_exception:
+                    raise SignatureMismatchError('This is a difficult situation, there is no guarantee that a call with a variable number of positional arguments will fill all the slots of positional arguments.')
+                result = False
+        elif callable_matcher.is_args:
+            if self.number_of_position_args < callable_matcher.number_of_position_args:
+                result = False
+        elif self.number_of_position_args != callable_matcher.number_of_position_args:
             result = False
 
         return result
