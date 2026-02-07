@@ -6,3 +6,6 @@ class IncorrectArgumentsOrderError(Exception):
 
 class SignatureNotFoundError(Exception):
     ...
+
+class UnsupportedSignatureError(Exception):
+    ...

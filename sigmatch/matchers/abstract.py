@@ -6,6 +6,7 @@ from sigmatch.errors import (
     IncorrectArgumentsOrderError,
     SignatureMismatchError,
     SignatureNotFoundError,
+    UnsupportedSignatureError,
 )
 
 
@@ -107,7 +108,7 @@ class AbstractSignatureMatcher(ABC):  # noqa: PLW1641
                 if parameter.default == Parameter.empty:
                     result.append('.')
                 else:
-                    result.append('?')
+                    raise UnsupportedSignatureError('Reading signatures of only positional arguments with default values is not supported yet.')
 
             elif parameter.kind == Parameter.POSITIONAL_OR_KEYWORD:
                 if parameter.default == Parameter.empty:
@@ -116,7 +117,7 @@ class AbstractSignatureMatcher(ABC):  # noqa: PLW1641
                     result.append(parameter.name)
 
             elif parameter.kind == Parameter.KEYWORD_ONLY:
-                result.append(parameter.name)
+                raise UnsupportedSignatureError('Reading signatures of only keyword arguments with default values is not supported yet.')
 
             elif parameter.kind == Parameter.VAR_POSITIONAL:
                 result.append('*')
