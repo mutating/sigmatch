@@ -125,6 +125,9 @@ class AbstractSignatureMatcher(ABC):  # noqa: PLW1641
             elif parameter.kind == Parameter.VAR_KEYWORD:
                 result.append('**')
 
+            else:  # pragma: no cover
+                raise UnsupportedSignatureError('Reading signatures of this kind of arguments is not supported yet.')
+
         return result
 
     def _check_expected_signature(self, expected_signature: List[str]) -> None:
@@ -160,3 +163,6 @@ class AbstractSignatureMatcher(ABC):  # noqa: PLW1641
                 if met_double_star:
                     raise IncorrectArgumentsOrderError('Unpacking of the same type (**kwargs in this case) can be specified no more than once.')
                 met_double_star = True
+
+            else:  # pragma: no cover
+                raise IncorrectArgumentsOrderError(f'What does it mean, this point in expected signature: "{item}"?')
