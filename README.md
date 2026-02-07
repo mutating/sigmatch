@@ -13,6 +13,9 @@
 [![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pomponchik/sigmatch)
 
 
+![logo](https://raw.githubusercontent.com/pomponchik/sigmatch/develop/docs/assets/logo_3.svg)
+
+
 This small library allows you to quickly check whether any called object matches the signature you expect. This may be useful to you, for example, if you write libraries that work with callbacks.
 
 Install it:
