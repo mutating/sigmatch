@@ -1,6 +1,6 @@
 from typing import Any, Callable
 
-from sigmatch import SignatureNotFoundError
+from sigmatch import SignatureNotFoundError, UnsupportedSignatureError
 from sigmatch.matchers.abstract import AbstractSignatureMatcher
 
 
@@ -8,7 +8,7 @@ class FunctionSignatureMatcher(AbstractSignatureMatcher):
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         try:
             return self._get_symbols_from_callable(function) == self.expected_signature
-        except SignatureNotFoundError:
+        except (SignatureNotFoundError, UnsupportedSignatureError):
             if not raise_exception:
                 return False
             raise
