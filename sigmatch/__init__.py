@@ -7,6 +7,9 @@ from sigmatch.errors import (
 from sigmatch.errors import (
     SignatureNotFoundError as SignatureNotFoundError,
 )
+from sigmatch.errors import (
+    UnsupportedSignatureError as UnsupportedSignatureError,
+)
 from sigmatch.matchers.function_matcher import (
     FunctionSignatureMatcher as FunctionSignatureMatcher,
 )
