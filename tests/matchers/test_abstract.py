@@ -7,7 +7,6 @@ from sigmatch import (
     PossibleCallMatcher,
     SignatureMismatchError,
     SignatureNotFoundError,
-    UnsupportedSignatureError,
 )
 
 

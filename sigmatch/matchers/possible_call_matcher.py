@@ -1,11 +1,13 @@
-from typing import Any, Callable, Optional, List, cast
-from inspect import Parameter, Signature, signature
-
-from sigmatch import FunctionSignatureMatcher
-from sigmatch.errors import SignatureNotFoundError, UnsupportedSignatureError, SignatureMismatchError
-from sigmatch.matchers.abstract import AbstractSignatureMatcher
-
 from dataclasses import dataclass
+from inspect import Parameter, Signature, signature
+from typing import Any, Callable, List, Optional, cast
+
+from sigmatch.errors import (
+    SignatureMismatchError,
+    SignatureNotFoundError,
+    UnsupportedSignatureError,
+)
+from sigmatch.matchers.abstract import AbstractSignatureMatcher
 
 
 @dataclass
@@ -25,17 +27,12 @@ class Baskets:
 
 class PossibleCallMatcher(AbstractSignatureMatcher):
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
-        #1. ТОЛЬКО ИМЕННЫЕ аргументы (множество)
-        #2. ТОЛЬКО ПОЗИЦИОННЫЕ (множество)
-        #3. ИМЕННЫЕ ИЛИ ПОЗИЦИОННЫЕ (список с именами и позициями, позиции значимы)
-        #4. Бесконечные контейнеры АРГОВ и КВАРГОВ (два була)
-        #
-        #
         result = True
         baskets = self._get_baskets(function)
 
 
-        have_to_be_positional = []
+        have_to_be_positional: List[str] = []
+
         for name in baskets.only_named:
             if len(have_to_be_positional) == self.number_of_position_args:
                 break
@@ -69,10 +66,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
                 raise SignatureMismatchError('This is a difficult situation, there is no guarantee that a call with a variable number of positional arguments will fill all the slots of positional arguments.')
             result = False
 
-        elif (self.number_of_position_args > len(baskets.only_posititional) + len(baskets.named_or_positional)) and not baskets.is_args:
-            result = False
-
-        elif (self.is_args and not baskets.is_args) or (self.is_kwargs and not baskets.is_kwargs):
+        elif ((self.number_of_position_args > len(baskets.only_posititional) + len(baskets.named_or_positional)) and not baskets.is_args) or (self.is_args and not baskets.is_args) or (self.is_kwargs and not baskets.is_kwargs):
             result = False
 
         if (not result) and raise_exception:
