@@ -50,7 +50,12 @@ class AbstractSignatureMatcher(ABC):  # noqa: PLW1641
                 raise ValueError('It is impossible to determine the signature of an object that is not being callable.')
             return False
 
-        result = self._match(function, raise_exception=raise_exception)
+        try:
+            result = self._match(function, raise_exception=raise_exception)
+        except SignatureNotFoundError:
+            if raise_exception:
+                raise
+            result = False
 
         if not result and raise_exception:
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')

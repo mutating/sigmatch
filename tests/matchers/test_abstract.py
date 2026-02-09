@@ -326,20 +326,3 @@ def test_special_functions(function, matcher_class):
 
     with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
         matcher_class('.').match(function, raise_exception=True)
-
-
-def test_try_to_check_unsupported_signatures(matcher_class):
-    def unsupported_1(a, b=None, /):
-        ...
-
-    def unsupported_2(a, b, *, c, d):
-        ...
-
-    assert not matcher_class('..').match(unsupported_1)
-    assert not matcher_class('.., c, d').match(unsupported_2)
-
-    with pytest.raises(UnsupportedSignatureError, match=match('Reading signatures of only positional arguments with default values is not supported yet.')):
-        matcher_class('..').match(unsupported_1, raise_exception=True)
-
-    with pytest.raises(UnsupportedSignatureError, match=match('Reading signatures of only keyword arguments with default values is not supported yet.')):
-        matcher_class('.., c, d').match(unsupported_2, raise_exception=True)

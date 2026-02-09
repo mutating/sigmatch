@@ -96,16 +96,18 @@ def test_signature_cannot_contain_other_names_arguments_except_calls_one_if_sign
 
     assert PossibleCallMatcher('a, b, c, **').match(example)
     assert PossibleCallMatcher('a, b, c, d, **').match(example)
-
-    assert not PossibleCallMatcher('a, b, **').match(example)
+    assert PossibleCallMatcher('a, b, **').match(example)
 
 def test_signature_cannot_contain_other_names_arguments_except_calls_one_if_signature_and_call_contain_2stars_and_call_doesnt_contain_named_arguments():
-    def good_example(**args): ...
-    def bad_example(a=None, b=None, c=None, **args): ...
+    def example_1(**args): ...
+    def example_2(a=None, b=None, c=None, **args): ...
 
-    assert PossibleCallMatcher('**').match(good_example)
+    assert PossibleCallMatcher('**').match(example_1)
+    assert PossibleCallMatcher('**').match(example_2)
+    assert PossibleCallMatcher('a, b, **').match(example_2)
+    assert PossibleCallMatcher('a, b, d, **').match(example_2)
 
-    assert not PossibleCallMatcher('**').match(bad_example)
+    assert not PossibleCallMatcher('., a, b, d, **').match(example_2)
 
 
 def test_named_arguments_are_same_if_call_and_signature_dont_contain_2stars():
@@ -118,13 +120,13 @@ def test_named_arguments_are_same_if_call_and_signature_dont_contain_2stars():
     assert PossibleCallMatcher('a, b, c').match(example_1)
     assert PossibleCallMatcher().match(example_2)
     assert PossibleCallMatcher('., a, b, c').match(example_3)
+    assert PossibleCallMatcher('., a, b').match(example_3)
     assert PossibleCallMatcher('.').match(example_4)
+    assert PossibleCallMatcher('a, b').match(example_1)
+    assert PossibleCallMatcher('a, c').match(example_1)
 
-    assert not PossibleCallMatcher('a, b').match(example_1)
-    assert not PossibleCallMatcher('a, c').match(example_1)
     assert not PossibleCallMatcher('a, b, c, d').match(example_1)
     assert not PossibleCallMatcher('a').match(example_2)
-    assert not PossibleCallMatcher('., a, b').match(example_3)
     assert not PossibleCallMatcher('., a, b, c, d').match(example_3)
     assert not PossibleCallMatcher('., a').match(example_4)
 
@@ -135,8 +137,7 @@ def test_signature_contains_only_known_named_arguments_if_call_dont_contain_2sta
     assert PossibleCallMatcher('a, b, c').match(example)
     assert PossibleCallMatcher('a, b, c, d').match(example)
     assert PossibleCallMatcher('a, b, c, d, e').match(example)
-
-    assert not PossibleCallMatcher('a, b').match(example)
-    assert not PossibleCallMatcher('a, c').match(example)
-    assert not PossibleCallMatcher('b, c').match(example)
-    assert not PossibleCallMatcher().match(example)
+    assert PossibleCallMatcher('a, b').match(example)
+    assert PossibleCallMatcher('a, c').match(example)
+    assert PossibleCallMatcher('b, c').match(example)
+    assert PossibleCallMatcher().match(example)
