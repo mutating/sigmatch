@@ -1,7 +1,7 @@
 import pytest
 from full_match import match
 
-from sigmatch import PossibleCallMatcher, SignatureNotFoundError
+from sigmatch import PossibleCallMatcher, SignatureNotFoundError, SignatureMismatchError
 from sigmatch.matchers.series import SignatureSeriesMatcher
 
 
@@ -71,3 +71,29 @@ def test_check_method(transformed):
 def test_repr():
     assert repr(SignatureSeriesMatcher()) == 'SignatureSeriesMatcher()'
     assert repr(PossibleCallMatcher('.') + PossibleCallMatcher('..')) == "SignatureSeriesMatcher(PossibleCallMatcher('.'), PossibleCallMatcher('..'))"
+
+
+def test_throughput_check():
+    assert (PossibleCallMatcher() + PossibleCallMatcher('..')).match(lambda x, y: None)
+
+    assert not (PossibleCallMatcher() + PossibleCallMatcher('...')).match(lambda x, y: None)
+    assert not (PossibleCallMatcher() + PossibleCallMatcher('...')).match(next)
+
+
+    with pytest.raises(SignatureMismatchError, match=match('The signature failed one of the checks.')):
+        (PossibleCallMatcher() + PossibleCallMatcher('...')).match(lambda x, y: None, raise_exception=True)
+
+
+@pytest.mark.parametrize(
+    'function',
+    [
+        next,
+    ],
+)
+def test_special_functions(function):
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher()).match(function)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('..')).match(function)
+
+    with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
+        SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function, raise_exception=True)
