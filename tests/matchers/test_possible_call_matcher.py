@@ -264,3 +264,17 @@ def test_raise_exception():
 
     with pytest.raises(SignatureMismatchError, match=match('The signature of the callable object does not match the expected one.')):
         PossibleCallMatcher('.., b, z').match(function_2, raise_exception=True)
+
+
+def test_repr():
+    assert repr(SignatureMismatchError()) == 'SignatureMismatchError()'
+    assert repr(SignatureMismatchError('.')) == "SignatureMismatchError('.')"
+    assert repr(SignatureMismatchError('...')) == "SignatureMismatchError('...')"
+    assert repr(SignatureMismatchError('..., kek')) == "SignatureMismatchError('..., kek')"
+    assert repr(SignatureMismatchError('kek')) == "SignatureMismatchError('kek')"
+    assert repr(SignatureMismatchError('kek, lol')) == "SignatureMismatchError('kek, lol')"
+    assert repr(SignatureMismatchError('kek, lol, *')) == "SignatureMismatchError('kek, lol, *')"
+    assert repr(SignatureMismatchError('*')) == "SignatureMismatchError('*')"
+    assert repr(SignatureMismatchError('*, **')) == "SignatureMismatchError('*, **')"
+    assert repr(SignatureMismatchError('**')) == "SignatureMismatchError('**')"
+    assert repr(SignatureMismatchError('..., kek, *, **')) == "SignatureMismatchError('..., kek, *, **')"

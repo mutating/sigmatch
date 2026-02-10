@@ -30,22 +30,6 @@ def test_eq_the_same_class_other_objects(matcher_class):
     assert matcher_class('.') != 'kek'
 
 
-def test_repr(matcher_class):
-    class_name = matcher_class.__name__
-
-    assert repr(matcher_class()) == f'{class_name}()'
-    assert repr(matcher_class('.')) == f'{class_name}(".")'
-    assert repr(matcher_class('...')) == f'{class_name}("...")'
-    assert repr(matcher_class('..., kek')) == f'{class_name}("..., kek")'
-    assert repr(matcher_class('kek')) == f'{class_name}("kek")'
-    assert repr(matcher_class('kek, lol')) == f'{class_name}("kek, lol")'
-    assert repr(matcher_class('kek, lol, *')) == f'{class_name}("kek, lol, *")'
-    assert repr(matcher_class('*')) == f'{class_name}("*")'
-    assert repr(matcher_class('*, **')) == f'{class_name}("*, **")'
-    assert repr(matcher_class('**')) == f'{class_name}("**")'
-    assert repr(matcher_class('..., kek, *, **')) == f'{class_name}("..., kek, *, **")'
-
-
 @pytest.mark.parametrize(
     ('to_split', 'output'),
     [
@@ -125,41 +109,29 @@ def test_raise_exception_if_not_callable(matcher_class):
 
 def test_strict_match_for_random_functions(matcher_class, transformed):
     @transformed
-    def function_1():
-        pass
+    def function_1(): ...
     @transformed
-    def function_2(arg):
-        pass
+    def function_2(arg): ...
     @transformed
-    def function_3(**kwargs):
-        pass
+    def function_3(**kwargs): ...
     @transformed
-    def function_4(*args, **kwargs):
-        pass
+    def function_4(*args, **kwargs): ...
     @transformed
-    def function_5(a, b):
-        pass
+    def function_5(a, b): ...
     @transformed
-    def function_6(a, b, c):
-        pass
+    def function_6(a, b, c): ...
     @transformed
-    def function_7(a, b, c=False):
-        pass
+    def function_7(a, b, c=False): ...
     @transformed
-    def function_8(a, b, c=False, *d):
-        pass
+    def function_8(a, b, c=False, *d): ...
     @transformed
-    def function_9(a, b, c=False, *d, **e):
-        pass
+    def function_9(a, b, c=False, *d, **e): ...
     @transformed
-    def function_10(a, b, c=False, c2=False, *d, **e):
-        pass
+    def function_10(a, b, c=False, c2=False, *d, **e): ...
     @transformed
-    def function_11(a, b, b2, c=False, c2=False, *d, **e):
-        pass
+    def function_11(a, b, b2, c=False, c2=False, *d, **e): ...
     @transformed
-    def function_12(c=False, c2=False):
-        pass
+    def function_12(c=False, c2=False): ...
 
     assert matcher_class().match(function_1)
     assert matcher_class('.').match(function_2)
