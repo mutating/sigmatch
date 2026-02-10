@@ -1,7 +1,7 @@
 import pytest
 from full_match import match
 
-from sigmatch import PossibleCallMatcher, SignatureSeriesMatcher, SignatureMismatchError, IncorrectArgumentsOrderError
+from sigmatch import PossibleCallMatcher, SignatureSeriesMatcher, SignatureMismatchError, IncorrectArgumentsOrderError, SignatureNotFoundError
 
 
 def test_there_should_be_star_in_signature_if_call_contains_it(transformed):
@@ -410,3 +410,58 @@ def test_bad_string_with_spaces_as_parameter():
 def test_if_parameter_is_not_string():
     with pytest.raises(TypeError, match=match('Only strings can be used as symbolic representation of function parameters. You used "1" (int).')):
         PossibleCallMatcher('.', 1, '.')
+
+
+@pytest.mark.parametrize(
+    'options',
+    [
+        {},
+        {'raise_exception': False},
+    ],
+)
+def test_not_raise_exception_if_dismatch_and_flag_is_false(options):
+    assert not PossibleCallMatcher().match(lambda x: None, **options)  # noqa: ARG005
+
+
+def test_class_with_init_as_callable():
+    class Kek:
+        def __init__(self, a, b, c):
+            pass
+
+    assert PossibleCallMatcher('.', '.', '.').match(Kek)
+    assert not PossibleCallMatcher().match(Kek)
+
+
+def test_class_with_call_dunder_object_is_callable(transformed):
+    class Kek:
+        @transformed
+        def __call__(self, a, b, c):
+            pass
+
+    assert PossibleCallMatcher('.', '.', '.').match(Kek())
+    assert not PossibleCallMatcher().match(Kek())
+
+
+@pytest.mark.parametrize(
+    'function',
+    [
+        next,
+    ],
+)
+def test_special_functions(function):
+    assert not PossibleCallMatcher('.').match(function)
+    assert not PossibleCallMatcher().match(function)
+    assert not PossibleCallMatcher('..').match(function)
+
+    with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
+        PossibleCallMatcher('.').match(function, raise_exception=True)
+
+
+def test_check_method(transformed):
+    class Kek:
+        @transformed
+        def kek(self, a, b, c):
+            pass
+
+    assert PossibleCallMatcher('.', '.', '.').match(Kek().kek)
+    assert not PossibleCallMatcher().match(Kek().kek)

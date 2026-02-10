@@ -2,9 +2,10 @@ import pytest
 from transfunctions import transfunction
 
 from sigmatch import PossibleCallMatcher
+from sigmatch.matchers.series import SignatureSeriesMatcher
 
 
-@pytest.fixture(params=[PossibleCallMatcher])
+@pytest.fixture(params=[PossibleCallMatcher, SignatureSeriesMatcher])
 def matcher_class(request):
     return request.param
 
