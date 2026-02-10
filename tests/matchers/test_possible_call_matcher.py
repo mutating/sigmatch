@@ -204,16 +204,38 @@ def test_random_functions(transformed):
     def function_12(c=False, c2=False):
         pass
 
-    assert PossibleCallMatcher('.', '**').match(function_4)
-    assert PossibleCallMatcher('.', '.').match(function_7)
-    assert PossibleCallMatcher('.', '.', 'c').match(function_8)
-    assert PossibleCallMatcher('.', '.', 'c2', '*', '**').match(function_10)
+    assert PossibleCallMatcher('., **').match(function_4)
+    assert PossibleCallMatcher('..').match(function_7)
+    assert PossibleCallMatcher('.., c').match(function_8)
+    assert PossibleCallMatcher('.., c2, *, **').match(function_10)
     assert PossibleCallMatcher('c').match(function_12)
 
     assert not PossibleCallMatcher('.').match(function_1)
     assert not PossibleCallMatcher('c').match(function_2)
-    assert not PossibleCallMatcher('.', '**').match(function_3)
-    assert not PossibleCallMatcher('.', 'c').match(function_5)
-    assert not PossibleCallMatcher('.', '.').match(function_6)
-    assert not PossibleCallMatcher('.', 'c', '*', '**').match(function_9)
+    assert not PossibleCallMatcher('., **').match(function_3)
+    assert not PossibleCallMatcher('., c').match(function_5)
+    assert not PossibleCallMatcher('..').match(function_6)
+    assert not PossibleCallMatcher('., c', '*', '**').match(function_9)
     assert not PossibleCallMatcher('.', '.', 'c2', '*', '**').match(function_11)
+
+
+def test_only_positional_parameters():
+    def function_1(a, /): ...
+    def function_2(a, b, /, z): ...
+
+    assert PossibleCallMatcher('.').match(function_1)
+
+    assert not PossibleCallMatcher().match(function_1)
+    assert not PossibleCallMatcher('a').match(function_1)
+    assert not PossibleCallMatcher('b').match(function_1)
+    assert not PossibleCallMatcher('..').match(function_1)
+    assert not PossibleCallMatcher('*').match(function_1)
+    assert not PossibleCallMatcher('**').match(function_1)
+
+    assert PossibleCallMatcher('...').match(function_2)
+    assert PossibleCallMatcher('.., z').match(function_2)
+
+    assert not PossibleCallMatcher('.., b').match(function_2)
+    assert not PossibleCallMatcher('., b, z').match(function_2)
+    assert not PossibleCallMatcher('., z, *').match(function_2)
+    assert not PossibleCallMatcher('., z, **').match(function_2)
