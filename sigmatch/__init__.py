@@ -13,3 +13,6 @@ from sigmatch.errors import (
 from sigmatch.matchers.possible_call import (
     PossibleCallMatcher as PossibleCallMatcher,
 )
+from sigmatch.matchers.series import (
+    SignatureSeriesMatcher as SignatureSeriesMatcher,
+)
