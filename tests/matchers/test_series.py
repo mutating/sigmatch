@@ -29,7 +29,7 @@ def test_class_with_init_as_callable(matcher_class):
         def __init__(self, a, b, c):
             pass
 
-    assert SignatureSeriesMatcher(PossibleCallMatcher('.', '.', '.')).match(Kek)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('...')).match(Kek)
     assert not SignatureSeriesMatcher(PossibleCallMatcher()).match(Kek)
 
 
@@ -39,7 +39,7 @@ def test_class_with_call_dunder_object_is_callable(matcher_class, transformed):
         def __call__(self, a, b, c):
             pass
 
-    assert SignatureSeriesMatcher(PossibleCallMatcher('.', '.', '.')).match(Kek())
+    assert SignatureSeriesMatcher(PossibleCallMatcher('...')).match(Kek())
     assert not SignatureSeriesMatcher(PossibleCallMatcher()).match(Kek())
 
 
@@ -64,5 +64,5 @@ def test_check_method(transformed):
         def kek(self, a, b, c):
             pass
 
-    assert SignatureSeriesMatcher(PossibleCallMatcher('.', '.', '.')).match(Kek().kek)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('...')).match(Kek().kek)
     assert not SignatureSeriesMatcher(PossibleCallMatcher()).match(Kek().kek)

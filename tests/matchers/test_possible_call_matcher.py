@@ -428,7 +428,7 @@ def test_class_with_init_as_callable():
         def __init__(self, a, b, c):
             pass
 
-    assert PossibleCallMatcher('.', '.', '.').match(Kek)
+    assert PossibleCallMatcher('...').match(Kek)
     assert not PossibleCallMatcher().match(Kek)
 
 
@@ -438,7 +438,7 @@ def test_class_with_call_dunder_object_is_callable(transformed):
         def __call__(self, a, b, c):
             pass
 
-    assert PossibleCallMatcher('.', '.', '.').match(Kek())
+    assert PossibleCallMatcher('...').match(Kek())
     assert not PossibleCallMatcher().match(Kek())
 
 
@@ -463,5 +463,5 @@ def test_check_method(transformed):
         def kek(self, a, b, c):
             pass
 
-    assert PossibleCallMatcher('.', '.', '.').match(Kek().kek)
+    assert PossibleCallMatcher('...').match(Kek().kek)
     assert not PossibleCallMatcher().match(Kek().kek)
