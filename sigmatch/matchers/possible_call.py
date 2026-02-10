@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from inspect import Parameter, Signature, signature
-from typing import Any, Callable, Tuple, List, Optional, cast
+from typing import Any, Callable, List, Optional, Tuple, cast
+
+from printo import descript_data_object
 
 from sigmatch.errors import (
     IncorrectArgumentsOrderError,
@@ -52,7 +54,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         content = ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
         quoted_content = f'"{content}"' if content else ''
 
-        return f'{type(self).__name__}({quoted_content})'
+        return descript_data_object(type(self).__name__, (quoted_content,), {})
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, type(self)):
@@ -166,14 +168,15 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         result = []
 
         for item in args:
-            splitted_item = item.split(',')
-            for chunk in splitted_item:
-                stripped_chunk = chunk.strip()
-                if stripped_chunk and all(x=='.' for x in stripped_chunk):
-                    for dot in stripped_chunk:
-                        result.append(dot)
-                else:
-                    result.append(stripped_chunk)
+            if item:
+                splitted_item = item.split(',')
+                for chunk in splitted_item:
+                    stripped_chunk = chunk.strip()
+                    if stripped_chunk and all(x=='.' for x in stripped_chunk):
+                        for dot in stripped_chunk:
+                            result.append(dot)
+                    else:
+                        result.append(stripped_chunk)
 
         self._check_expected_signature(result)
         return result
