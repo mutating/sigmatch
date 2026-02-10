@@ -14,8 +14,8 @@ def transformed(request):
     def transformator_function(function):
         if request.param == 'sync':
             return function
-        elif request.param == 'async':
+        if request.param == 'async':
             return transfunction(function, check_decorators=False).get_async_function()
-        elif request.param == 'generator':
+        if request.param == 'generator':
             return transfunction(function, check_decorators=False).get_generator_function()
     return transformator_function

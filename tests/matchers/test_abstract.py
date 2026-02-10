@@ -5,7 +5,6 @@ from sigmatch import (
     FunctionSignatureMatcher,
     IncorrectArgumentsOrderError,
     PossibleCallMatcher,
-    SignatureMismatchError,
     SignatureNotFoundError,
 )
 
