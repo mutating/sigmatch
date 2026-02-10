@@ -1,7 +1,7 @@
 import pytest
 from full_match import match
 
-from sigmatch import PossibleCallMatcher, SignatureMismatchError
+from sigmatch import PossibleCallMatcher, SignatureSeriesMatcher, SignatureMismatchError, IncorrectArgumentsOrderError
 
 
 def test_there_should_be_star_in_signature_if_call_contains_it(transformed):
@@ -207,6 +207,51 @@ def test_random_functions(transformed):
     assert not PossibleCallMatcher('.', '.', 'c2', '*', '**').match(function_11)
 
 
+def test_strict_match_for_random_functions(transformed):
+    @transformed
+    def function_1(): ...
+    @transformed
+    def function_2(arg): ...
+    @transformed
+    def function_3(**kwargs): ...
+    @transformed
+    def function_4(*args, **kwargs): ...
+    @transformed
+    def function_5(a, b): ...
+    @transformed
+    def function_6(a, b, c): ...
+    @transformed
+    def function_7(a, b, c=False): ...
+    @transformed
+    def function_8(a, b, c=False, *d): ...
+    @transformed
+    def function_9(a, b, c=False, *d, **e): ...
+    @transformed
+    def function_10(a, b, c=False, c2=False, *d, **e): ...
+    @transformed
+    def function_11(a, b, b2, c=False, c2=False, *d, **e): ...
+    @transformed
+    def function_12(c=False, c2=False): ...
+
+    assert PossibleCallMatcher().match(function_1)
+    assert PossibleCallMatcher('.').match(function_2)
+    assert PossibleCallMatcher('**').match(function_3)
+    assert PossibleCallMatcher('*', '**').match(function_4)
+    assert PossibleCallMatcher('.', '.').match(function_5)
+    assert PossibleCallMatcher('.', '.', '.').match(function_6)
+    assert PossibleCallMatcher('.', '.', 'c').match(function_7)
+    assert PossibleCallMatcher('.', '.', 'c', '*').match(function_8)
+    assert PossibleCallMatcher('.', '.', 'c', '*', '**').match(function_9)
+    assert PossibleCallMatcher('.', '.', 'c', 'c2', '*', '**').match(function_10)
+    assert PossibleCallMatcher('.', '.', '.', 'c', 'c2', '*', '**').match(function_11)
+    assert PossibleCallMatcher('c', 'c2').match(function_12)
+
+    assert PossibleCallMatcher('.').match(lambda x: None)  # noqa: ARG005
+    assert PossibleCallMatcher('.', '.').match(lambda x, y: None)  # noqa: ARG005
+    assert PossibleCallMatcher('.', '*').match(lambda x, *y: None)  # noqa: ARG005
+    assert PossibleCallMatcher('.', '**').match(lambda x, **y: None)  # noqa: ARG005
+
+
 def test_only_positional_parameters():
     def function_1(a, /): ...
     def function_2(a, b, /, z): ...
@@ -267,14 +312,101 @@ def test_raise_exception():
 
 
 def test_repr():
-    assert repr(SignatureMismatchError()) == 'SignatureMismatchError()'
-    assert repr(SignatureMismatchError('.')) == "SignatureMismatchError('.')"
-    assert repr(SignatureMismatchError('...')) == "SignatureMismatchError('...')"
-    assert repr(SignatureMismatchError('..., kek')) == "SignatureMismatchError('..., kek')"
-    assert repr(SignatureMismatchError('kek')) == "SignatureMismatchError('kek')"
-    assert repr(SignatureMismatchError('kek, lol')) == "SignatureMismatchError('kek, lol')"
-    assert repr(SignatureMismatchError('kek, lol, *')) == "SignatureMismatchError('kek, lol, *')"
-    assert repr(SignatureMismatchError('*')) == "SignatureMismatchError('*')"
-    assert repr(SignatureMismatchError('*, **')) == "SignatureMismatchError('*, **')"
-    assert repr(SignatureMismatchError('**')) == "SignatureMismatchError('**')"
-    assert repr(SignatureMismatchError('..., kek, *, **')) == "SignatureMismatchError('..., kek, *, **')"
+    assert repr(PossibleCallMatcher()) == 'PossibleCallMatcher()'
+    assert repr(PossibleCallMatcher('.')) == "PossibleCallMatcher('.')"
+    assert repr(PossibleCallMatcher('...')) == "PossibleCallMatcher('...')"
+    assert repr(PossibleCallMatcher('..., kek')) == "PossibleCallMatcher('..., kek')"
+    assert repr(PossibleCallMatcher('kek')) == "PossibleCallMatcher('kek')"
+    assert repr(PossibleCallMatcher('kek, lol')) == "PossibleCallMatcher('kek, lol')"
+    assert repr(PossibleCallMatcher('kek, lol, *')) == "PossibleCallMatcher('kek, lol, *')"
+    assert repr(PossibleCallMatcher('*')) == "PossibleCallMatcher('*')"
+    assert repr(PossibleCallMatcher('*, **')) == "PossibleCallMatcher('*, **')"
+    assert repr(PossibleCallMatcher('**')) == "PossibleCallMatcher('**')"
+    assert repr(PossibleCallMatcher('..., kek, *, **')) == "PossibleCallMatcher('..., kek, *, **')"
+
+
+def test_eq_the_same_class():
+    assert PossibleCallMatcher() == PossibleCallMatcher()
+    assert PossibleCallMatcher('.') == PossibleCallMatcher('.')
+    assert PossibleCallMatcher('..., kek, *, **') == PossibleCallMatcher('..., kek, *, **')
+    assert PossibleCallMatcher('..., kek, *, **') == PossibleCallMatcher('...', 'kek', '*', '**')
+
+    assert PossibleCallMatcher('.') != PossibleCallMatcher()
+    assert PossibleCallMatcher('..., kek, *, **') != PossibleCallMatcher('...', 'kek', '*')
+
+
+def test_eq_different_classes():
+    assert SignatureSeriesMatcher() != PossibleCallMatcher()
+    assert SignatureSeriesMatcher(PossibleCallMatcher('.')) != PossibleCallMatcher('.')
+
+
+@pytest.mark.parametrize(
+    ('to_split', 'output'),
+    [
+        (['lol, kek'], ['lol', 'kek']),
+        (['., .'], ['.', '.']),
+        (['., *'], ['.', '*']),
+        (['., kek, *, **'], ['.', 'kek', '*', '**']),
+        (['., kek , *, **'], ['.', 'kek', '*', '**']),
+        (['., kek           , *, **'], ['.', 'kek', '*', '**']),
+
+        (['lol,kek'], ['lol', 'kek']),
+        (['.,.'], ['.', '.']),
+        (['.,*'], ['.', '*']),
+        (['.,kek,*,**'], ['.', 'kek', '*', '**']),
+        (['..,kek,*,**'], ['.', '.', 'kek', '*', '**']),
+
+        (['..'], ['.', '.']),
+        (['...., *'], ['.', '.', '.', '.', '*']),
+        (['...., ., *'], ['.', '.', '.', '.', '.', '*']),
+        (['..., kek, *, **'], ['.', '.', '.', 'kek', '*', '**']),
+    ],
+)
+def test_strings_with_multiple_items(to_split, output):
+    assert PossibleCallMatcher(*to_split).expected_signature == output
+
+
+@pytest.mark.parametrize(
+    ('before', 'after', 'message'),
+    [
+        ('kek', '.', 'Positional arguments must be specified first.'),
+        ('*', '.', 'Positional arguments must be specified first.'),
+        ('**', '.', 'Positional arguments must be specified first.'),
+
+        ('*', 'kek', 'Keyword arguments can be specified after positional ones, but before unpacking.'),
+        ('**', 'kek', 'Keyword arguments can be specified after positional ones, but before unpacking.'),
+
+        ('**', '*', 'Unpacking positional arguments should go before unpacking keyword arguments.'),
+
+        ('*', '*', 'Unpacking of the same type (*args in this case) can be specified no more than once.'),
+        ('**', '**', 'Unpacking of the same type (**kwargs in this case) can be specified no more than once.'),
+
+        ('kek', 'kek', 'The same argument name cannot occur twice. You have a repeat of "kek".'),
+    ],
+)
+def test_wrong_order(before, message, after):
+    with pytest.raises(IncorrectArgumentsOrderError, match=match(message)):
+        PossibleCallMatcher(before, after)
+
+
+@pytest.mark.parametrize(
+    'bad_string', [
+        '88',
+        '/',
+        '$',
+        'keko kek',
+    ],
+)
+def test_other_bad_string_as_parameter(bad_string):
+    with pytest.raises(ValueError, match=match(f'Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "{bad_string}".')):
+        PossibleCallMatcher('.', bad_string)
+
+
+def test_bad_string_with_spaces_as_parameter():
+    with pytest.raises(ValueError, match=match('Only strings of a certain format can be used as symbols for function arguments: arbitrary variable names, and ".", "*", "**" strings. You used "".')):
+        PossibleCallMatcher('.', '   ')
+
+
+def test_if_parameter_is_not_string():
+    with pytest.raises(TypeError, match=match('Only strings can be used as symbolic representation of function parameters. You used "1" (int).')):
+        PossibleCallMatcher('.', 1, '.')
