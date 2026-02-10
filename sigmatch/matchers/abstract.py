@@ -1,12 +1,10 @@
 from abc import ABC, abstractmethod
-from inspect import Parameter, Signature, signature
-from typing import Any, Callable, List, Optional, Tuple, cast
+from typing import Any, Callable, List, Tuple
 
 from sigmatch.errors import (
     IncorrectArgumentsOrderError,
     SignatureMismatchError,
     SignatureNotFoundError,
-    UnsupportedSignatureError,
 )
 
 
