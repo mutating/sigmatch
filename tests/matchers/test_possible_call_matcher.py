@@ -168,41 +168,29 @@ def test_signature_contains_only_known_named_arguments_if_call_dont_contain_2sta
 
 def test_random_functions(transformed):
     @transformed
-    def function_1():
-        pass
+    def function_1(): ...
     @transformed
-    def function_2(arg):
-        pass
+    def function_2(arg): ...
     @transformed
-    def function_3(**kwargs):
-        pass
+    def function_3(**kwargs): ...
     @transformed
-    def function_4(*args, **kwargs):
-        pass
+    def function_4(*args, **kwargs): ...
     @transformed
-    def function_5(a, b):
-        pass
+    def function_5(a, b): ...
     @transformed
-    def function_6(a, b, c):
-        pass
+    def function_6(a, b, c): ...
     @transformed
-    def function_7(a, b, c=False):
-        pass
+    def function_7(a, b, c=False): ...
     @transformed
-    def function_8(a, b, c=False, *d):
-        pass
+    def function_8(a, b, c=False, *d): ...
     @transformed
-    def function_9(a, b, c=False, *d, **e):
-        pass
+    def function_9(a, b, c=False, *d, **e): ...
     @transformed
-    def function_10(a, b, c=False, c2=False, *d, **e):
-        pass
+    def function_10(a, b, c=False, c2=False, *d, **e): ...
     @transformed
-    def function_11(a, b, b2, c=False, c2=False, *d, **e):
-        pass
+    def function_11(a, b, b2, c=False, c2=False, *d, **e): ...
     @transformed
-    def function_12(c=False, c2=False):
-        pass
+    def function_12(c=False, c2=False): ...
 
     assert PossibleCallMatcher('., **').match(function_4)
     assert PossibleCallMatcher('..').match(function_7)
