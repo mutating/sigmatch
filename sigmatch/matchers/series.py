@@ -2,7 +2,7 @@ from typing import Callable, Any
 
 from printo import descript_data_object
 
-from sigmatch.errors import UnsupportedSignatureError, SignatureMismatchError
+from sigmatch.errors import SignatureNotFoundError, SignatureMismatchError
 from sigmatch.matchers.abstract import AbstractSignatureMatcher
 
 
@@ -17,11 +17,14 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
         if not self.matchers:
             return True
 
+        result = False
+
         try:
             result = any(matcher.match(function, raise_exception=raise_exception) for matcher in self.matchers)
-        except (UnsupportedSignatureError, SignatureMismatchError) as e:
+        except (SignatureNotFoundError, SignatureMismatchError) as e:
+            if isinstance(e, SignatureNotFoundError) and raise_exception:
+                raise
             if raise_exception:
                 raise SignatureMismatchError('The signature failed one of the checks.') from e
-            result = False
 
         return result
