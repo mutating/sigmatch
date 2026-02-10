@@ -61,20 +61,6 @@ class AbstractSignatureMatcher(ABC):  # noqa: PLW1641
             raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
         return result
 
-    @classmethod
-    def from_callable(cls, function: Callable[..., Any], raise_exception: bool = False) -> 'AbstractSignatureMatcher':
-        error = True
-        try:
-            symbols = cls._get_symbols_from_callable(function)
-            error = False
-        except Exception:
-            if raise_exception:
-                raise
-            symbols = []
-        result = cls(*symbols)
-        result.is_wrong = error
-        return result
-
     @abstractmethod
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         ...  # pragma: no cover
@@ -93,46 +79,6 @@ class AbstractSignatureMatcher(ABC):  # noqa: PLW1641
                     result.append(stripped_chunk)
 
         self._check_expected_signature(result)
-        return result
-
-    @classmethod
-    def _get_symbols_from_callable(cls, function: Callable[..., Any]) -> List[str]:
-        try:
-            function_signature: Optional[Signature] = signature(function)
-            parameters = list(cast(Signature, function_signature).parameters.values())
-            return cls._convert_parameters_to_symbols(parameters)
-        except ValueError as e:
-            raise SignatureNotFoundError('For some functions, it is not possible to extract the signature, and this is one of them.') from e
-
-    @staticmethod
-    def _convert_parameters_to_symbols(parameters: List[Parameter]) -> List[str]:
-        result = []
-
-        for parameter in parameters:
-            if parameter.kind == Parameter.POSITIONAL_ONLY:
-                if parameter.default == Parameter.empty:
-                    result.append('.')
-                else:
-                    raise UnsupportedSignatureError('Reading signatures of only positional arguments with default values is not supported yet.')
-
-            elif parameter.kind == Parameter.POSITIONAL_OR_KEYWORD:
-                if parameter.default == Parameter.empty:
-                    result.append('.')
-                else:
-                    result.append(parameter.name)
-
-            elif parameter.kind == Parameter.KEYWORD_ONLY:
-                raise UnsupportedSignatureError('Reading signatures of only keyword arguments with default values is not supported yet.')
-
-            elif parameter.kind == Parameter.VAR_POSITIONAL:
-                result.append('*')
-
-            elif parameter.kind == Parameter.VAR_KEYWORD:
-                result.append('**')
-
-            else:  # pragma: no cover
-                raise UnsupportedSignatureError('Reading signatures of this kind of arguments is not supported yet.')
-
         return result
 
     def _check_expected_signature(self, expected_signature: List[str]) -> None:

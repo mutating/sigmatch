@@ -2,7 +2,6 @@ import pytest
 from full_match import match
 
 from sigmatch import (
-    FunctionSignatureMatcher,
     IncorrectArgumentsOrderError,
     PossibleCallMatcher,
     SignatureNotFoundError,
@@ -30,7 +29,6 @@ def test_eq_the_same_class(matcher_class):
 def test_eq_the_same_class_other_objects(matcher_class):
     assert matcher_class('.') != 5
     assert matcher_class('.') != 'kek'
-    assert FunctionSignatureMatcher() != PossibleCallMatcher()
 
 
 def test_repr(matcher_class):

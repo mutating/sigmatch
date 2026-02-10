@@ -30,7 +30,6 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         result = True
         baskets = self._get_baskets(function)
 
-
         have_to_be_positional: List[str] = []
 
         for name in baskets.only_named:

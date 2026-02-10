@@ -10,9 +10,6 @@ from sigmatch.errors import (
 from sigmatch.errors import (
     UnsupportedSignatureError as UnsupportedSignatureError,
 )
-from sigmatch.matchers.function_matcher import (
-    FunctionSignatureMatcher as FunctionSignatureMatcher,
-)
 from sigmatch.matchers.possible_call_matcher import (
     PossibleCallMatcher as PossibleCallMatcher,
 )
