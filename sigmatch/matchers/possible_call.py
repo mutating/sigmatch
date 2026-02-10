@@ -108,9 +108,6 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         elif ((self.number_of_position_args > len(baskets.only_posititional) + len(baskets.named_or_positional)) and not baskets.is_args) or (self.is_args and not baskets.is_args) or (self.is_kwargs and not baskets.is_kwargs):
             result = False
 
-        if (not result) and raise_exception:
-            raise SignatureMismatchError('The signature of the callable object does not match the expected one.')
-
         return result
 
     @classmethod
