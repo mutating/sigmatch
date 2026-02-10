@@ -14,6 +14,9 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
         return descript_data_object(type(self).__name__, self.matchers, {})
 
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
+        if not self.matchers:
+            return True
+
         try:
             result = any(matcher.match(function, raise_exception=raise_exception) for matcher in self.matchers)
         except (UnsupportedSignatureError, SignatureMismatchError) as e:

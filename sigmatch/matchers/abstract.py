@@ -15,7 +15,7 @@ class AbstractSignatureMatcher(ABC):
 
         for matcher in (self, other):
             if isinstance(matcher, SignatureSeriesMatcher):
-                matchers.extend(other.matchers)
+                matchers.extend(matcher.matchers)
             else:
                 matchers.append(matcher)
 
