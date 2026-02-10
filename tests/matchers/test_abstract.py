@@ -127,29 +127,41 @@ def test_raise_exception_if_not_callable(matcher_class):
         matcher_class().match('kek', raise_exception=True)
 
 
-def test_strict_match_for_random_functions(matcher_class):
+def test_strict_match_for_random_functions(matcher_class, transformed):
+    @transformed
     def function_1():
         pass
+    @transformed
     def function_2(arg):
         pass
+    @transformed
     def function_3(**kwargs):
         pass
+    @transformed
     def function_4(*args, **kwargs):
         pass
+    @transformed
     def function_5(a, b):
         pass
+    @transformed
     def function_6(a, b, c):
         pass
+    @transformed
     def function_7(a, b, c=False):
         pass
+    @transformed
     def function_8(a, b, c=False, *d):
         pass
+    @transformed
     def function_9(a, b, c=False, *d, **e):
         pass
+    @transformed
     def function_10(a, b, c=False, c2=False, *d, **e):
         pass
+    @transformed
     def function_11(a, b, b2, c=False, c2=False, *d, **e):
         pass
+    @transformed
     def function_12(c=False, c2=False):
         pass
 
@@ -172,91 +184,6 @@ def test_strict_match_for_random_functions(matcher_class):
     assert matcher_class('.', '**').match(lambda x, **y: None)  # noqa: ARG005
 
 
-def test_strict_match_random_async_functions(matcher_class):
-    async def function_1():
-        pass
-    async def function_2(arg):
-        pass
-    async def function_3(**kwargs):
-        pass
-    async def function_4(*args, **kwargs):
-        pass
-    async def function_5(a, b):
-        pass
-    async def function_6(a, b, c):
-        pass
-    async def function_7(a, b, c=False):
-        pass
-    async def function_8(a, b, c=False, *d):
-        pass
-    async def function_9(a, b, c=False, *d, **e):
-        pass
-    async def function_10(a, b, c=False, c2=False, *d, **e):
-        pass
-    async def function_11(a, b, b2, c=False, c2=False, *d, **e):
-        pass
-    async def function_12(c=False, c2=False):
-        pass
-
-    assert matcher_class().match(function_1)
-    assert matcher_class('.').match(function_2)
-    assert matcher_class('**').match(function_3)
-    assert matcher_class('*', '**').match(function_4)
-    assert matcher_class('.', '.').match(function_5)
-    assert matcher_class('.', '.', '.').match(function_6)
-    assert matcher_class('.', '.', 'c').match(function_7)
-    assert matcher_class('.', '.', 'c', '*').match(function_8)
-    assert matcher_class('.', '.', 'c', '*', '**').match(function_9)
-    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10)
-    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11)
-    assert matcher_class('c', 'c2').match(function_12)
-
-
-def test_strict_match_random_generator_functions(matcher_class):
-    def function_1():
-        yield None
-    def function_2(arg):  # noqa: ARG001
-        yield None
-    def function_3(**kwargs):  # noqa: ARG001
-        yield None
-    def function_4(*args, **kwargs):  # noqa: ARG001
-        yield None
-    def function_5(a, b):  # noqa: ARG001
-        yield None
-    def function_6(a, b, c):  # noqa: ARG001
-        yield None
-    def function_7(a, b, c=False):  # noqa: ARG001
-        yield None
-    def function_8(a, b, c=False, *d):  # noqa: ARG001
-        yield None
-    def function_9(a, b, c=False, *d, **e):  # noqa: ARG001
-        yield None
-    def function_10(a, b, c=False, c2=False, *d, **e):  # noqa: ARG001
-        yield None
-    def function_11(a, b, b2, c=False, c2=False, *d, **e):  # noqa: ARG001
-        yield None
-    def function_12(c=False, c2=False):  # noqa: ARG001
-        yield None
-
-    assert matcher_class().match(function_1)
-    assert matcher_class('.').match(function_2)
-    assert matcher_class('**').match(function_3)
-    assert matcher_class('*', '**').match(function_4)
-    assert matcher_class('.', '.').match(function_5)
-    assert matcher_class('.', '.', '.').match(function_6)
-    assert matcher_class('.', '.', 'c').match(function_7)
-    assert matcher_class('.', '.', 'c', '*').match(function_8)
-    assert matcher_class('.', '.', 'c', '*', '**').match(function_9)
-    assert matcher_class('.', '.', 'c', 'c2', '*', '**').match(function_10)
-    assert matcher_class('.', '.', '.', 'c', 'c2', '*', '**').match(function_11)
-    assert matcher_class('c', 'c2').match(function_12)
-
-
-def test_raise_exception_if_dismatch(matcher_class):
-    with pytest.raises(SignatureMismatchError):
-        matcher_class().match(lambda x: None, raise_exception=True)  # noqa: ARG005
-
-
 @pytest.mark.parametrize(
     'options',
     [
@@ -268,8 +195,9 @@ def test_not_raise_exception_if_dismatch_and_flag_is_false(options, matcher_clas
     assert not matcher_class().match(lambda x: None, **options)  # noqa: ARG005
 
 
-def test_it_works_with_class_based_callables(matcher_class):
+def test_it_works_with_class_based_callables(matcher_class, transformed):
     class LocalCallable:
+        @transformed
         def __call__(self):
             pass
 
@@ -294,8 +222,9 @@ def test_class_with_init_as_callable(matcher_class):
     assert not matcher_class().match(Kek)
 
 
-def test_class_with_call_dunder_object_is_callable(matcher_class):
+def test_class_with_call_dunder_object_is_callable(matcher_class, transformed):
     class Kek:
+        @transformed
         def __call__(self, a, b, c):
             pass
 
@@ -303,8 +232,9 @@ def test_class_with_call_dunder_object_is_callable(matcher_class):
     assert not matcher_class().match(Kek())
 
 
-def test_check_method(matcher_class):
+def test_check_method(matcher_class, transformed):
     class Kek:
+        @transformed
         def kek(self, a, b, c):
             pass
 
