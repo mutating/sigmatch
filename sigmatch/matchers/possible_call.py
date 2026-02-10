@@ -52,9 +52,8 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         double_star = '**' if self.is_kwargs else ''
 
         content = ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
-        quoted_content = f'"{content}"' if content else ''
 
-        return descript_data_object(type(self).__name__, (quoted_content,), {})
+        return descript_data_object(type(self).__name__, (content,), {}, filters={0: lambda x: x != ''})
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, type(self)):

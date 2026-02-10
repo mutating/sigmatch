@@ -8,6 +8,19 @@ from sigmatch.errors import (
 
 
 class AbstractSignatureMatcher(ABC):
+    def __add__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':
+        from sigmatch.matchers.series import SignatureSeriesMatcher
+
+        matchers = []
+
+        for matcher in (self, other):
+            if isinstance(matcher, SignatureSeriesMatcher):
+                matchers.extend(other.matchers)
+            else:
+                matchers.append(matcher)
+
+        return SignatureSeriesMatcher(*matchers)
+
     def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         if not callable(function):
             if raise_exception:
