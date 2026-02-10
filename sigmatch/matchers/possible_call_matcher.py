@@ -32,15 +32,19 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
 
         have_to_be_positional: List[str] = []
 
-        for name in baskets.only_named:
-            if len(have_to_be_positional) == self.number_of_position_args:
+        reverse_counter_or_number_of_position_args = self.number_of_position_args
+
+        for name in baskets.only_posititional:
+            if not reverse_counter_or_number_of_position_args:
                 break
             have_to_be_positional.append(name)
+            reverse_counter_or_number_of_position_args -= 1
 
         for name in baskets.named_or_positional:
-            if len(have_to_be_positional) == self.number_of_position_args:
+            if not reverse_counter_or_number_of_position_args:
                 break
             have_to_be_positional.append(name)
+            reverse_counter_or_number_of_position_args -= 1
 
         for name in self.names_of_named_args:
             if name in have_to_be_positional:
