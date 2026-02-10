@@ -223,7 +223,44 @@ def test_only_positional_parameters():
     assert PossibleCallMatcher('...').match(function_2)
     assert PossibleCallMatcher('.., z').match(function_2)
 
+    assert not PossibleCallMatcher().match(function_2)
     assert not PossibleCallMatcher('.., b').match(function_2)
     assert not PossibleCallMatcher('., b, z').match(function_2)
     assert not PossibleCallMatcher('., z, *').match(function_2)
     assert not PossibleCallMatcher('., z, **').match(function_2)
+
+
+def test_only_keyword_parameters():
+    def function_1(*, a): ...
+    def function_2(a, *, b, z): ...
+
+    assert PossibleCallMatcher('a').match(function_1)
+
+    assert not PossibleCallMatcher('.').match(function_1)
+    assert not PossibleCallMatcher().match(function_1)
+    assert not PossibleCallMatcher('...').match(function_1)
+    assert not PossibleCallMatcher('*').match(function_1)
+    assert not PossibleCallMatcher('**').match(function_1)
+    assert not PossibleCallMatcher('a, *').match(function_1)
+
+    assert PossibleCallMatcher('a, b, z').match(function_2)
+    assert PossibleCallMatcher('., b, z').match(function_2)
+
+    assert not PossibleCallMatcher('.., b, z').match(function_2)
+    assert not PossibleCallMatcher('.., z').match(function_2)
+    assert not PossibleCallMatcher('...').match(function_2)
+    assert not PossibleCallMatcher('.., *').match(function_2)
+    assert not PossibleCallMatcher('., *').match(function_2)
+    assert not PossibleCallMatcher('*').match(function_2)
+    assert not PossibleCallMatcher('**').match(function_2)
+
+
+def test_raise_exception():
+    def function_1(): ...
+    def function_2(a, *, b, z): ...
+
+    with pytest.raises(SignatureMismatchError, match=match('The signature of the callable object does not match the expected one.')):
+        PossibleCallMatcher('.').match(function_1, raise_exception=True)
+
+    with pytest.raises(SignatureMismatchError, match=match('The signature of the callable object does not match the expected one.')):
+        PossibleCallMatcher('.., b, z').match(function_2, raise_exception=True)
