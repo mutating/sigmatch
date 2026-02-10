@@ -66,3 +66,8 @@ def test_check_method(transformed):
 
     assert SignatureSeriesMatcher(PossibleCallMatcher('...')).match(Kek().kek)
     assert not SignatureSeriesMatcher(PossibleCallMatcher()).match(Kek().kek)
+
+
+def test_repr():
+    assert repr(SignatureSeriesMatcher()) == 'SignatureSeriesMatcher()'
+    assert repr(PossibleCallMatcher('.') + PossibleCallMatcher('..')) == "SignatureSeriesMatcher(PossibleCallMatcher('.'), PossibleCallMatcher('..'))"
