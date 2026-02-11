@@ -23,11 +23,11 @@ class AbstractSignatureMatcher(ABC):
 
     @abstractmethod
     def __eq__(self, other: Any) -> bool:
-        ...
+        ...  # pragma: no cover
 
     @abstractmethod
     def __hash__(self) -> int:
-        ...
+        ...  # pragma: no cover
 
     def __and__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':
         from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
