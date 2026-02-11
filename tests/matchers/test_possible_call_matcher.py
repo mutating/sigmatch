@@ -324,6 +324,7 @@ def test_repr():
     assert repr(PossibleCallMatcher('..., kek')) == "PossibleCallMatcher('..., kek')"
     assert repr(PossibleCallMatcher('kek')) == "PossibleCallMatcher('kek')"
     assert repr(PossibleCallMatcher('kek, lol')) == "PossibleCallMatcher('kek, lol')"
+    assert repr(PossibleCallMatcher('lol, kek')) == "PossibleCallMatcher('kek, lol')"
     assert repr(PossibleCallMatcher('kek, lol, *')) == "PossibleCallMatcher('kek, lol, *')"
     assert repr(PossibleCallMatcher('*')) == "PossibleCallMatcher('*')"
     assert repr(PossibleCallMatcher('*, **')) == "PossibleCallMatcher('*, **')"

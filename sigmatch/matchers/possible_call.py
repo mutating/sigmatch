@@ -217,7 +217,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
 
     def _get_signature_string(self):
         positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
-        named_args = ', '.join([x for x in self.expected_signature if x.isidentifier()])
+        named_args = ', '.join(sorted([x for x in self.expected_signature if x.isidentifier()]))
         star = '*' if self.is_args else ''
         double_star = '**' if self.is_kwargs else ''
 
