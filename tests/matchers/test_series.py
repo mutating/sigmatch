@@ -114,4 +114,6 @@ def test_eq():
     assert SignatureSeriesMatcher(PossibleCallMatcher('..'), PossibleCallMatcher()) == SignatureSeriesMatcher(PossibleCallMatcher(), PossibleCallMatcher('..'))
 
     assert SignatureSeriesMatcher() != SignatureSeriesMatcher(PossibleCallMatcher('..'))
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..')) != SignatureSeriesMatcher()
     assert SignatureSeriesMatcher(PossibleCallMatcher('.')) != SignatureSeriesMatcher(PossibleCallMatcher('..'))
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..')) != SignatureSeriesMatcher(PossibleCallMatcher('.'))
