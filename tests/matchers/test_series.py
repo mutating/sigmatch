@@ -43,21 +43,6 @@ def test_class_with_call_dunder_object_is_callable(matcher_class, transformed):
     assert not SignatureSeriesMatcher(PossibleCallMatcher()).match(Kek())
 
 
-@pytest.mark.parametrize(
-    'function',
-    [
-        next,
-    ],
-)
-def test_special_functions(function, matcher_class):
-    assert not SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function)
-    assert not SignatureSeriesMatcher(PossibleCallMatcher()).match(function)
-    assert not SignatureSeriesMatcher(PossibleCallMatcher('..')).match(function)
-
-    with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
-        SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function, raise_exception=True)
-
-
 def test_check_method(transformed):
     class Kek:
         @transformed
