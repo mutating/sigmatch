@@ -22,6 +22,10 @@ class AbstractSignatureMatcher(ABC):
         return SignatureSeriesMatcher(*matchers)
 
     @abstractmethod
+    def __eq__(self, other: Any) -> bool:
+        ...
+
+    @abstractmethod
     def __hash__(self) -> int:
         ...
 

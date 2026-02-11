@@ -49,7 +49,12 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         return descript_data_object(type(self).__name__, (self._get_signature_string(),), {}, filters={0: lambda x: x != ''})
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, type(self)):
+        from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
+
+        if isinstance(other, SignatureSeriesMatcher):
+            return other == self
+
+        elif not isinstance(other, type(self)):
             return False
 
         return self.expected_signature == other.expected_signature

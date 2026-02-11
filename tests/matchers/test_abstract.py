@@ -4,6 +4,7 @@ from full_match import match
 from sigmatch import (
     PossibleCallMatcher,
 )
+from sigmatch.matchers.series import SignatureSeriesMatcher
 
 
 def test_match_not_callable(matcher_class):
@@ -40,3 +41,7 @@ def test_empty_class_as_callable(matcher_class):
 
     assert matcher_class().match(Kek)
     assert not PossibleCallMatcher('.').match(Kek)
+
+
+def test_and():
+    assert PossibleCallMatcher('.') & PossibleCallMatcher('.') == SignatureSeriesMatcher(PossibleCallMatcher('.'))

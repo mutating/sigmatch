@@ -104,3 +104,14 @@ def test_bool():
     assert SignatureSeriesMatcher(PossibleCallMatcher('..'))
     assert SignatureSeriesMatcher(PossibleCallMatcher())
     assert SignatureSeriesMatcher(PossibleCallMatcher(), PossibleCallMatcher('..'))
+
+
+def test_eq():
+    assert SignatureSeriesMatcher() == SignatureSeriesMatcher()
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..')) == SignatureSeriesMatcher(PossibleCallMatcher('..'))
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..')) == SignatureSeriesMatcher(PossibleCallMatcher('..'), PossibleCallMatcher('..'))
+    assert SignatureSeriesMatcher(PossibleCallMatcher(), PossibleCallMatcher('..')) == SignatureSeriesMatcher(PossibleCallMatcher(), PossibleCallMatcher('..'))
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..'), PossibleCallMatcher()) == SignatureSeriesMatcher(PossibleCallMatcher(), PossibleCallMatcher('..'))
+
+    assert SignatureSeriesMatcher() != SignatureSeriesMatcher(PossibleCallMatcher('..'))
+    assert SignatureSeriesMatcher(PossibleCallMatcher('.')) != SignatureSeriesMatcher(PossibleCallMatcher('..'))

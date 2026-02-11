@@ -342,8 +342,15 @@ def test_eq_the_same_class():
 
 
 def test_eq_different_classes():
-    assert SignatureSeriesMatcher() != PossibleCallMatcher()
-    assert SignatureSeriesMatcher(PossibleCallMatcher('.')) != PossibleCallMatcher('.')
+    assert SignatureSeriesMatcher(PossibleCallMatcher()) == PossibleCallMatcher()
+    assert PossibleCallMatcher() == SignatureSeriesMatcher(PossibleCallMatcher())
+    assert SignatureSeriesMatcher(PossibleCallMatcher('.')) == PossibleCallMatcher('.')
+    assert PossibleCallMatcher('.') == SignatureSeriesMatcher(PossibleCallMatcher('.'))
+
+    assert SignatureSeriesMatcher(PossibleCallMatcher('.')) != PossibleCallMatcher()
+    assert PossibleCallMatcher() != SignatureSeriesMatcher(PossibleCallMatcher('.'))
+    assert SignatureSeriesMatcher(PossibleCallMatcher('.')) != PossibleCallMatcher('..')
+    assert PossibleCallMatcher('..') != SignatureSeriesMatcher(PossibleCallMatcher('.'))
 
 
 @pytest.mark.parametrize(
