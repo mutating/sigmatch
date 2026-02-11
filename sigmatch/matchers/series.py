@@ -30,7 +30,7 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
         if not isinstance(other, AbstractSignatureMatcher):
             return False
 
-        elif isinstance(other, PossibleCallMatcher):
+        if isinstance(other, PossibleCallMatcher):
             other = type(self)(other)
 
         return set(self.matchers) == set(other.matchers)

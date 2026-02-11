@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple, Any, Callable
+from typing import Any, Callable, Tuple
 
 from sigmatch.errors import (
     SignatureMismatchError,

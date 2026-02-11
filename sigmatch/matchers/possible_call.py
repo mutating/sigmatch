@@ -54,7 +54,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         if isinstance(other, SignatureSeriesMatcher):
             return other == self
 
-        elif not isinstance(other, type(self)):
+        if not isinstance(other, type(self)):
             return False
 
         return self.expected_signature == other.expected_signature
