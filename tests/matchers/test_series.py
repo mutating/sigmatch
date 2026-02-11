@@ -23,6 +23,10 @@ def test_order():
     assert (PossibleCallMatcher('..') + PossibleCallMatcher('.')).matchers == [PossibleCallMatcher('.'), PossibleCallMatcher('..')]
 
 
+def test_include_another_series():
+    assert SignatureSeriesMatcher(PossibleCallMatcher('.') + PossibleCallMatcher('..')).matchers == [PossibleCallMatcher('.'), PossibleCallMatcher('..')]
+
+
 @pytest.mark.parametrize(
     'options',
     [
