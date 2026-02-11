@@ -97,3 +97,10 @@ def test_special_functions(function):
 
     with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
         SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function, raise_exception=True)
+
+
+def test_bool():
+    assert not SignatureSeriesMatcher()
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..'))
+    assert SignatureSeriesMatcher(PossibleCallMatcher())
+    assert SignatureSeriesMatcher(PossibleCallMatcher(), PossibleCallMatcher('..'))
