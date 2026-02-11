@@ -9,7 +9,7 @@ from sigmatch.errors import (
 
 class AbstractSignatureMatcher(ABC):
     def __add__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':
-        from sigmatch.matchers.series import SignatureSeriesMatcher
+        from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
 
         matchers = []
 
