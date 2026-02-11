@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable
+from typing import Tuple, Any, Callable
 
 from sigmatch.errors import (
     SignatureMismatchError,
@@ -20,6 +20,19 @@ class AbstractSignatureMatcher(ABC):
                 matchers.append(matcher)
 
         return SignatureSeriesMatcher(*matchers)
+
+    @abstractmethod
+    def __hash__(self) -> int:
+        ...
+
+    def __and__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':
+        from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
+
+        both: Tuple[SignatureSeriesMatcher, SignatureSeriesMatcher] = tuple([x if isinstance(x, SignatureSeriesMatcher) else SignatureSeriesMatcher(x) for x in (self, other)])
+
+        intersection = sorted(set(both[0].matchers) & set(both[1].matchers), key=lambda x: x._get_signature_string())
+
+        return SignatureSeriesMatcher(*intersection)
 
     def match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         if not callable(function):

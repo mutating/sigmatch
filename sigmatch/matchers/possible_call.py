@@ -46,20 +46,16 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         self.is_wrong = False
 
     def __repr__(self) -> str:
-        positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
-        named_args = ', '.join([x for x in self.expected_signature if x.isidentifier()])
-        star = '*' if self.is_args else ''
-        double_star = '**' if self.is_kwargs else ''
-
-        content = ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
-
-        return descript_data_object(type(self).__name__, (content,), {}, filters={0: lambda x: x != ''})
+        return descript_data_object(type(self).__name__, (self._get_signature_string(),), {}, filters={0: lambda x: x != ''})
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, type(self)):
             return False
 
         return self.expected_signature == other.expected_signature
+
+    def __hash__(self) -> int:
+        return hash(tuple(self.expected_signature))
 
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         result = True
@@ -213,3 +209,11 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
 
             else:  # pragma: no cover
                 raise IncorrectArgumentsOrderError(f'What does it mean, this point in expected signature: "{item}"?')
+
+    def _get_signature_string(self):
+        positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
+        named_args = ', '.join([x for x in self.expected_signature if x.isidentifier()])
+        star = '*' if self.is_args else ''
+        double_star = '**' if self.is_kwargs else ''
+
+        return ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
