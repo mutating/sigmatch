@@ -116,3 +116,12 @@ def test_eq():
     assert SignatureSeriesMatcher(PossibleCallMatcher('..')) != SignatureSeriesMatcher()
     assert SignatureSeriesMatcher(PossibleCallMatcher('.')) != SignatureSeriesMatcher(PossibleCallMatcher('..'))
     assert SignatureSeriesMatcher(PossibleCallMatcher('..')) != SignatureSeriesMatcher(PossibleCallMatcher('.'))
+
+
+def test_hash():
+    assert hash(PossibleCallMatcher('.') + PossibleCallMatcher('..')) == hash((PossibleCallMatcher('.'), PossibleCallMatcher('..')))
+
+    assert {
+        PossibleCallMatcher('.') + PossibleCallMatcher('..'): 'lol',
+        PossibleCallMatcher('.') + PossibleCallMatcher('...'): 'kek',
+    }[PossibleCallMatcher('.') + PossibleCallMatcher('..')] == 'lol'

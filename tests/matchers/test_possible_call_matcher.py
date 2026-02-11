@@ -478,3 +478,12 @@ def test_check_method(transformed):
 
     assert PossibleCallMatcher('...').match(Kek().kek)
     assert not PossibleCallMatcher().match(Kek().kek)
+
+
+def test_hash():
+    assert hash(PossibleCallMatcher('.')) == hash(('.',))
+
+    assert {
+        PossibleCallMatcher('.'): 'lol',
+        PossibleCallMatcher('..'): 'kek',
+    }[PossibleCallMatcher('.')] == 'lol'
