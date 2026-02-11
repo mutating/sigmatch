@@ -17,6 +17,8 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
             else:
                 self.matchers.append(matcher)
 
+        self.matchers = sorted(set(self.matchers), key=lambda x: x._get_signature_string())
+
     def __repr__(self) -> str:
         return descript_data_object(type(self).__name__, self.matchers, {})
 

@@ -7,10 +7,20 @@ from sigmatch.matchers.series import SignatureSeriesMatcher
 
 def test_sum_is_flat():
     first = PossibleCallMatcher('.')
-    second = PossibleCallMatcher('.')
-    third = PossibleCallMatcher('.')
+    second = PossibleCallMatcher('..')
+    third = PossibleCallMatcher('...')
 
     assert list((first + second + third).matchers) == [first, second, third]
+
+
+def test_deduplication():
+    assert PossibleCallMatcher('.') + PossibleCallMatcher('.') == SignatureSeriesMatcher(PossibleCallMatcher('.'))
+    assert (PossibleCallMatcher('.') + PossibleCallMatcher('.')).matchers == [PossibleCallMatcher('.')]
+
+
+def test_order():
+    assert (PossibleCallMatcher('.') + PossibleCallMatcher('..')).matchers == [PossibleCallMatcher('.'), PossibleCallMatcher('..')]
+    assert (PossibleCallMatcher('..') + PossibleCallMatcher('.')).matchers == [PossibleCallMatcher('.'), PossibleCallMatcher('..')]
 
 
 @pytest.mark.parametrize(
