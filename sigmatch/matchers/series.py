@@ -26,7 +26,7 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
         return bool(self.matchers)
 
     def __hash__(self) -> int:
-        return hash(self.matchers)
+        return hash(tuple(self.matchers))
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AbstractSignatureMatcher):
