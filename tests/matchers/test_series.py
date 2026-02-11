@@ -1,7 +1,7 @@
 import pytest
 from full_match import match
 
-from sigmatch import PossibleCallMatcher, SignatureNotFoundError, SignatureMismatchError
+from sigmatch import PossibleCallMatcher, SignatureMismatchError, SignatureNotFoundError
 from sigmatch.matchers.series import SignatureSeriesMatcher
 
 

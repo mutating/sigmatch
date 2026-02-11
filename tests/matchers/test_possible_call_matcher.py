@@ -1,7 +1,13 @@
 import pytest
 from full_match import match
 
-from sigmatch import PossibleCallMatcher, SignatureSeriesMatcher, SignatureMismatchError, IncorrectArgumentsOrderError, SignatureNotFoundError
+from sigmatch import (
+    IncorrectArgumentsOrderError,
+    PossibleCallMatcher,
+    SignatureMismatchError,
+    SignatureNotFoundError,
+    SignatureSeriesMatcher,
+)
 
 
 def test_there_should_be_star_in_signature_if_call_contains_it(transformed):
