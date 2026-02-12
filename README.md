@@ -62,7 +62,6 @@ Here are some examples of expressions:
 
 - `..` means *«the function will be called with 2 positional arguments»*.
 - `., first, second` means *«the function will be called with 1 positional argument and 2 named arguments: `first` and `second`»*.
-- `., first, second` means *«the function will be called with 1 positional argument and 2 named arguments: `first` and `second`»*.
 - `.., *` means *«the function will be called with 2 positional arguments, and a list can also be unpacked when calling»*, like this: `function(1, 2, *[3, 4, 5])`.
 - `.., first, **` means *«the function will be called with 2 positional arguments, the argument `first` will be passed by name, and a dictionary can be unpacked when calling»*, like this: `function(1, 2, first=3, **{'second': 4, 'third': 5})`.
 
@@ -97,3 +96,7 @@ expectation.match(not_suitable_function, raise_exception=True)
 #> ...
 #> sigmatch.errors.SignatureMismatchError: The signature of the callable object does not match the expected one.
 ```
+
+In this case, an exception will also be raised if the signature cannot be extracted from the passed object.
+
+
