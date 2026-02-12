@@ -126,3 +126,48 @@ You can treat the sum of such objects as a regular collection: iterate through t
 ## Comparing functions with each other
 
 Sometimes you may not know in advance what specific function signature you expect, but you need it to match the signature of some other function so that they are compatible with each other. How can you do it?
+
+To calculate all possible combinations of function arguments, use the `from_callable()` method of the `PossibleCallMatcher` class:
+
+```python
+def function(a, b):
+    ...
+
+possible_arguments = PossibleCallMatcher.from_callable(function)
+
+print(possible_arguments)
+#> SignatureSeriesMatcher(PossibleCallMatcher('., a'), PossibleCallMatcher('., b'), PossibleCallMatcher('..'), PossibleCallMatcher('a, b'))
+```
+
+Yes, this is the sum of expected signatures that you may have read about [above](#combining-different-expectations)!
+
+If you need to make sure that the signatures of two functions are *completely identical*, simply compare these combinations with each other:
+
+```python
+def function_1(a, b):
+    ...
+
+def function_2(a, b):
+    ...
+
+def different_function(a, b, c):
+    ...
+
+print(PossibleCallMatcher.from_callable(function_1) == PossibleCallMatcher.from_callable(function_2))
+#> True
+print(PossibleCallMatcher.from_callable(function_2) == PossibleCallMatcher.from_callable(function_3))
+#> False
+```
+
+But sometimes, the signature of one function is a subset of another, even though the signatures are not completely equal. And you want to make sure that any way you can call the first function, you can also call the second. How can you do this? Use the `in` operator:
+
+```python
+def function_1(a, b):
+    ...
+
+def function_2(a, b, c=None):
+    ...
+
+print(PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_2))
+#> True
+```
