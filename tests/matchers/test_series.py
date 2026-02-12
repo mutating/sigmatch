@@ -175,7 +175,7 @@ def test_empty_class_as_callable():
     assert SignatureSeriesMatcher(PossibleCallMatcher()).match(Kek)
 
 
-def test_it_works_with_class_based_callables(matcher_class, transformed):
+def test_it_works_with_class_based_callables(transformed):
     class LocalCallable:
         @transformed
         def __call__(self):
@@ -185,7 +185,7 @@ def test_it_works_with_class_based_callables(matcher_class, transformed):
     assert SignatureSeriesMatcher(PossibleCallMatcher()).match(LocalCallable)
 
 
-def test_match(transformed):
+def test_match(transformed):  # noqa: PLR0915
     @transformed
     def function_1(): ...
     @transformed
