@@ -21,11 +21,25 @@
 
 This small library allows you to quickly check whether any called object matches the signature you expect. This may be useful to you, for example, if you write libraries that work with callbacks.
 
-Install it:
+
+## Table of contents
+
+- [**Installation**](#installation)
+- [**Usage**](#usage)
+
+
+## Installation
+
+You can install [`sigmatch`](https://pypi.python.org/pypi/sigmatch) using pip:
 
 ```bash
 pip install sigmatch
 ```
+
+You can also quickly try out this and other packages without having to install using [instld](https://github.com/pomponchik/instld).
+
+
+## Usage
 
 Now to check the signatures of the callable objects, you need to create a `SignatureMatcher` object, which will "bake" a description of the parameters you expect. You can pass the following arguments to the constructor of the `SignatureMatcher` class (they are all strings):
 
