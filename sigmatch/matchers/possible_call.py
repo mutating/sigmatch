@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from inspect import Parameter, Signature, signature
-from typing import Any, Callable, List, Optional, Tuple, cast
+from typing import Any, Callable, Generator, List, Optional, Tuple, cast
 
 from printo import descript_data_object
 
@@ -222,3 +222,42 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         double_star = '**' if self.is_kwargs else ''
 
         return ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
+
+    @classmethod
+    def from_callable(cls, function: Callable[..., Any], raise_exception: bool = False) -> 'SignatureSeriesMatcher':  # noqa: F821
+        from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
+
+        try:
+            baskets = cls._get_baskets(function)
+        except SignatureNotFoundError:
+            if not raise_exception:
+                return SignatureSeriesMatcher()
+            raise
+
+        variable_ones = list(cls._produce_combinations_with_dots(baskets.named_or_positional, 0))
+        matchers = []
+
+        for variation in variable_ones:
+            all_call_arguments = []
+            all_call_arguments.append('.' * (len(baskets.only_named) + variation.count('.')))
+            all_call_arguments.extend([x for x in variation if x != '.'])
+            all_call_arguments.extend(baskets.only_named)
+            if baskets.is_args:
+                all_call_arguments.append('*')
+            if baskets.is_kwargs:
+                all_call_arguments.append('**')
+
+            matchers.append(cls(*all_call_arguments))
+
+        return SignatureSeriesMatcher(*matchers)
+
+    @classmethod
+    def _produce_combinations_with_dots(cls, iterable, index) -> Generator[List[str], List[str], None]:
+        if index == len(iterable):
+            yield []
+
+        else:
+
+            for element in (iterable[index], '.'):
+                for tail in cls._produce_combinations_with_dots(iterable, index + 1):
+                    yield [element, *tail]
