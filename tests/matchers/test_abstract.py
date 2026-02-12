@@ -25,23 +25,5 @@ def test_raise_exception_if_not_callable(matcher_class):
         matcher_class().match('kek', raise_exception=True)
 
 
-def test_it_works_with_class_based_callables(matcher_class, transformed):
-    class LocalCallable:
-        @transformed
-        def __call__(self):
-            pass
-
-    assert matcher_class().match(LocalCallable)
-    assert not PossibleCallMatcher('.').match(LocalCallable)
-
-
-def test_empty_class_as_callable(matcher_class):
-    class Kek:
-        pass
-
-    assert matcher_class().match(Kek)
-    assert not PossibleCallMatcher('.').match(Kek)
-
-
 def test_and():
     assert PossibleCallMatcher('.') & PossibleCallMatcher('.') == SignatureSeriesMatcher(PossibleCallMatcher('.'))

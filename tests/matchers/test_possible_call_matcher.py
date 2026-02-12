@@ -565,3 +565,20 @@ def test_from_callable_when_callable_is_wrong():
 
     with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
         PossibleCallMatcher.from_callable(next, raise_exception=True)
+
+
+def test_empty_class_as_callable():
+    class Kek:
+        pass
+
+    assert not PossibleCallMatcher('.').match(Kek)
+
+
+def test_it_works_with_class_based_callables(transformed):
+    class LocalCallable:
+        @transformed
+        def __call__(self):
+            pass
+
+    assert not PossibleCallMatcher('.').match(LocalCallable)
+    assert PossibleCallMatcher().match(LocalCallable)

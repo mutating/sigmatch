@@ -56,7 +56,7 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
 
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         if not self.matchers:
-            return True
+            return False
 
         result = False
 

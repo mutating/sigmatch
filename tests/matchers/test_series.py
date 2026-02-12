@@ -165,3 +165,91 @@ def test_iter():
     assert list(PossibleCallMatcher('.') + PossibleCallMatcher('..')) == [PossibleCallMatcher('.'), PossibleCallMatcher('..')]
     assert list(PossibleCallMatcher('.') + PossibleCallMatcher('..')  + PossibleCallMatcher('..')) == [PossibleCallMatcher('.'), PossibleCallMatcher('..')]
     assert list(PossibleCallMatcher('.') + PossibleCallMatcher('..')  + PossibleCallMatcher('...')) == [PossibleCallMatcher('.'), PossibleCallMatcher('..'), PossibleCallMatcher('...')]
+
+
+def test_empty_class_as_callable():
+    class Kek:
+        pass
+
+    assert not SignatureSeriesMatcher().match(Kek)
+    assert SignatureSeriesMatcher(PossibleCallMatcher()).match(Kek)
+
+
+def test_it_works_with_class_based_callables(matcher_class, transformed):
+    class LocalCallable:
+        @transformed
+        def __call__(self):
+            pass
+
+    assert not SignatureSeriesMatcher().match(LocalCallable)
+    assert SignatureSeriesMatcher(PossibleCallMatcher()).match(LocalCallable)
+
+
+def test_match(transformed):
+    @transformed
+    def function_1(): ...
+    @transformed
+    def function_2(a, b): ...
+    @transformed
+    def function_3(a, b, c=None): ...
+    @transformed
+    def function_4(a, b, c=None, *args): ...
+    @transformed
+    def function_5(a, b, c=None, **kwargs): ...
+
+    for callable_to_check in (function_1, function_2, function_3, function_4, function_5):
+        assert PossibleCallMatcher.from_callable(callable_to_check).match(callable_to_check)
+
+    assert not SignatureSeriesMatcher().match(function_1)
+    assert not SignatureSeriesMatcher().match(function_2)
+    assert not SignatureSeriesMatcher().match(function_3)
+    assert not SignatureSeriesMatcher().match(function_4)
+    assert not SignatureSeriesMatcher().match(function_5)
+
+    assert SignatureSeriesMatcher(PossibleCallMatcher()).match(function_1)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_1)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('..............')).match(function_1)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('a, b')).match(function_1)
+    with pytest.raises(SignatureMismatchError, match=match('The signature failed one of the checks.')):
+        SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_1, raise_exception=True)
+    with pytest.raises(SignatureMismatchError, match=match('The signature failed one of the checks.')):
+        SignatureSeriesMatcher(PossibleCallMatcher('a, b')).match(function_1, raise_exception=True)
+
+    assert SignatureSeriesMatcher(PossibleCallMatcher('a, b')).match(function_2)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('., b')).match(function_2)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..')).match(function_2)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_2)
+    with pytest.raises(SignatureMismatchError, match=match('The signature failed one of the checks.')):
+        SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_2, raise_exception=True)
+
+    assert SignatureSeriesMatcher(PossibleCallMatcher('a, b')).match(function_3)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('a, b, c')).match(function_3)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('., b')).match(function_3)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..')).match(function_3)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('...')).match(function_3)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_3)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('..............')).match(function_3)
+    with pytest.raises(SignatureMismatchError, match=match('The signature failed one of the checks.')):
+        SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_3, raise_exception=True)
+
+    assert SignatureSeriesMatcher(PossibleCallMatcher('a, b')).match(function_4)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('a, b, c')).match(function_4)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('., b')).match(function_4)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..')).match(function_4)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('...')).match(function_4)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..............')).match(function_4)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_4)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('a, b, c, d')).match(function_4)
+    with pytest.raises(SignatureMismatchError, match=match('The signature failed one of the checks.')):
+        SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_4, raise_exception=True)
+
+    assert SignatureSeriesMatcher(PossibleCallMatcher('a, b')).match(function_5)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('a, b, c')).match(function_5)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('a, b, c, d')).match(function_5)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('., b')).match(function_5)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('..')).match(function_5)
+    assert SignatureSeriesMatcher(PossibleCallMatcher('...')).match(function_5)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('..............')).match(function_5)
+    assert not SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_5)
+    with pytest.raises(SignatureMismatchError, match=match('The signature failed one of the checks.')):
+        SignatureSeriesMatcher(PossibleCallMatcher('.')).match(function_5, raise_exception=True)
