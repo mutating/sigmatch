@@ -284,6 +284,7 @@ def test_only_positional_parameters():
 def test_only_keyword_parameters():
     def function_1(*, a): ...
     def function_2(a, *, b, z): ...
+    def function_3(a, *, b, z=None): ...
 
     assert PossibleCallMatcher('a').match(function_1)
 
@@ -304,6 +305,16 @@ def test_only_keyword_parameters():
     assert not PossibleCallMatcher('., *').match(function_2)
     assert not PossibleCallMatcher('*').match(function_2)
     assert not PossibleCallMatcher('**').match(function_2)
+
+    assert PossibleCallMatcher('a, b').match(function_3)
+    assert PossibleCallMatcher('., b').match(function_3)
+    assert PossibleCallMatcher('a, b, z').match(function_3)
+
+    assert not PossibleCallMatcher('...').match(function_3)
+    assert not PossibleCallMatcher('.., *').match(function_3)
+    assert not PossibleCallMatcher('., *').match(function_3)
+    assert not PossibleCallMatcher('*').match(function_3)
+    assert not PossibleCallMatcher('**').match(function_3)
 
 
 def test_raise_exception():
