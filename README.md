@@ -55,9 +55,9 @@ You see, we passed a strange string to the `PossibleCallMatcher` constructor. Wh
 
 - You list the expected arguments of the function separated by commas, like this: `a, b, c`. The spaces are recommended, but not required
 - You indicate positional arguments using dots, like this: `., ., .`. The points do not necessarily have to be separated by commas, so a completely equivalent expression would be `...`.
-- If you specify a name, it means that the argument will be passed to the function by name (rather than by position). For example, the expression `x, y` means that the function will be called something like this: `function(x=1, y=2)` (not `function(x, y)`!).
+- If you specify a name, it means that the argument will be passed to the function by name (rather than by position). For example, the expression `x, y` means that the function will be called something like this: `function(x=1, y=2)` (not `function(1, 2)`!).
 - If you use unpacking when calling a function, use `*` for usual unpacking and `**` for dictionary one.
-- The arguments in the expression must be in the following order: first positional, then nominal, then usual unpacking, then dictionary unpacking. Do not violate this!
+- The arguments in the expression must be in the following order: first positional, then keyword, then usual unpacking, then dictionary unpacking. Do not violate this!
 - If the function does not accept any arguments, do not pass anything to the `PossibleCallMatcher` constructor.
 
 Here are some examples of expressions:
