@@ -124,3 +124,5 @@ You can treat the sum of such objects as a regular collection: iterate through t
 
 
 ## Comparing functions with each other
+
+Sometimes you may not know in advance which specific function signature you are expecting, but you need it to match the signature of some other function so that they are compatible with each other.
