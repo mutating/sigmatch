@@ -29,6 +29,10 @@ class AbstractSignatureMatcher(ABC):
     def __hash__(self) -> int:
         ...  # pragma: no cover
 
+    @abstractmethod
+    def __repr__(self) -> str:
+        ...  # pragma: no cover
+
     def __and__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':  # type: ignore[name-defined] # noqa: F821
         from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
 
