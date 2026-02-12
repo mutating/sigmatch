@@ -158,3 +158,10 @@ def test_contains():
 
     assert 1 not in (PossibleCallMatcher('.') + PossibleCallMatcher('..'))
     assert '.' not in (PossibleCallMatcher('.') + PossibleCallMatcher('..'))
+
+
+def test_iter():
+    assert list(SignatureSeriesMatcher()) == []
+    assert list(PossibleCallMatcher('.') + PossibleCallMatcher('..')) == [PossibleCallMatcher('.'), PossibleCallMatcher('..')]
+    assert list(PossibleCallMatcher('.') + PossibleCallMatcher('..')  + PossibleCallMatcher('..')) == [PossibleCallMatcher('.'), PossibleCallMatcher('..')]
+    assert list(PossibleCallMatcher('.') + PossibleCallMatcher('..')  + PossibleCallMatcher('...')) == [PossibleCallMatcher('.'), PossibleCallMatcher('..'), PossibleCallMatcher('...')]
