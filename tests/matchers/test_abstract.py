@@ -27,3 +27,6 @@ def test_raise_exception_if_not_callable(matcher_class):
 
 def test_and():
     assert PossibleCallMatcher('.') & PossibleCallMatcher('.') == SignatureSeriesMatcher(PossibleCallMatcher('.'))
+    assert PossibleCallMatcher('.') & (PossibleCallMatcher('.') + PossibleCallMatcher('..')) == SignatureSeriesMatcher(PossibleCallMatcher('.'))
+    assert (PossibleCallMatcher('.') + PossibleCallMatcher('..')) & (PossibleCallMatcher('.') + PossibleCallMatcher('..')) == (PossibleCallMatcher('.') + PossibleCallMatcher('..'))
+    assert (PossibleCallMatcher('.') + PossibleCallMatcher('..') + PossibleCallMatcher('...')) & (PossibleCallMatcher('.') + PossibleCallMatcher('..')) == (PossibleCallMatcher('.') + PossibleCallMatcher('..'))
