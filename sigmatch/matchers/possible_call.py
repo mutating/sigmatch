@@ -176,7 +176,14 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
                         result.append(stripped_chunk)
 
         self._check_expected_signature(result)
-        return result
+        return self._order_signature(result)
+
+    def _order_signature(self, symbols: List[str]) -> List[str]:
+        named_symbols = sorted(x for x in symbols if x.isidentifier())
+        dots = (x for x in symbols if x == '.')
+        args_and_kwargs = (x for x in symbols if x in ('*', '**'))
+
+        return [*dots, *named_symbols, *args_and_kwargs]
 
     def _check_expected_signature(self, expected_signature: List[str]) -> None:
         met_name = False
