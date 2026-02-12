@@ -171,3 +171,16 @@ def function_2(a, b, c=None):
 print(PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_2))
 #> True
 ```
+
+And finally, the weakest check: sometimes you need to make sure that two different functions have at least one common calling convention. To do this, you can calculate the intersection of signatures using the `&` operator:
+
+```python
+def function_1(a, b, d=None):
+    ...
+
+def function_2(a, b, c=None):
+    ...
+
+print(bool(PossibleCallMatcher.from_callable(function_1) & PossibleCallMatcher.from_callable(function_2)))
+#> True
+```
