@@ -1,5 +1,14 @@
-class SignatureMismatchError(Exception):
-    pass
+class SignatureError(Exception):
+    ...
 
-class IncorrectArgumentsOrderError(Exception):
-    pass
+class SignatureMismatchError(SignatureError):
+    ...
+
+class SignatureNotFoundError(SignatureError):
+    ...
+
+class UnsupportedSignatureError(SignatureError):
+    ...
+
+class IncorrectArgumentsOrderError(ValueError):
+    ...
