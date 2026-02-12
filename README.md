@@ -116,5 +116,5 @@ def now_its_suitable(a, b):  # Let me remind you that last time a function with 
     ...
     
 print(expectation.match(now_its_suitable))
-# True
+#> True
 ```
