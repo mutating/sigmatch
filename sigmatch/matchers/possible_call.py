@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from itertools import chain, combinations
 from inspect import Parameter, Signature, signature
 from typing import Any, Callable, Generator, List, Optional, Tuple, cast
 
@@ -241,20 +242,22 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
                 return SignatureSeriesMatcher()
             raise
 
-        variable_ones = list(cls._produce_combinations_with_dots(baskets.named_or_positional, 0))
+        dots_variations = list(cls._produce_combinations_with_dots(baskets.named_or_positional, 0))
         matchers = []
 
-        for variation in variable_ones:
-            all_call_arguments = []
-            all_call_arguments.append('.' * (len(baskets.only_named) + variation.count('.')))
-            all_call_arguments.extend([x for x in variation if x != '.'])
-            all_call_arguments.extend(baskets.only_named)
-            if baskets.is_args:
-                all_call_arguments.append('*')
-            if baskets.is_kwargs:
-                all_call_arguments.append('**')
+        for variation in dots_variations:
+            for exclude_this_names in cls._make_powerset_of_excludes(baskets.with_defaults):
+                all_call_arguments = []
+                all_call_arguments.append('.' * (len(baskets.only_posititional) + variation.count('.')))
+                all_call_arguments.extend([x for x in variation if x != '.' and x not in exclude_this_names])
+                all_call_arguments.extend([x for x in baskets.only_named if x not in exclude_this_names])
 
-            matchers.append(cls(*all_call_arguments))
+                if baskets.is_args:
+                    all_call_arguments.append('*')
+                if baskets.is_kwargs:
+                    all_call_arguments.append('**')
+
+                matchers.append(cls(*all_call_arguments))
 
         return SignatureSeriesMatcher(*matchers)
 
@@ -268,3 +271,9 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
             for element in (iterable[index], '.'):
                 for tail in cls._produce_combinations_with_dots(iterable, index + 1):
                     yield [element, *tail]
+
+    @staticmethod
+    def _make_powerset_of_excludes(some_names: List[str]):
+        return chain.from_iterable(
+            combinations(some_names, batch_size) for batch_size in range(len(some_names) + 1)
+        )

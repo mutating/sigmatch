@@ -593,3 +593,13 @@ def test_it_works_with_class_based_callables(transformed):
 
     assert not PossibleCallMatcher('.').match(LocalCallable)
     assert PossibleCallMatcher().match(LocalCallable)
+
+
+def test_function_in_function():
+    def function_1(a, b):
+        ...
+
+    def function_2(a, b, c=None):
+        ...
+
+    assert PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_2)
