@@ -341,6 +341,8 @@ def test_eq_the_same_class():
     assert PossibleCallMatcher('.') != PossibleCallMatcher()
     assert PossibleCallMatcher('..., kek, *, **') != PossibleCallMatcher('...', 'kek', '*')
 
+    assert PossibleCallMatcher('a, c') == PossibleCallMatcher('c, a')
+
 
 def test_eq_different_classes():
     assert SignatureSeriesMatcher(PossibleCallMatcher()) == PossibleCallMatcher()
@@ -357,14 +359,16 @@ def test_eq_different_classes():
 @pytest.mark.parametrize(
     ('to_split', 'output'),
     [
-        (['lol, kek'], ['lol', 'kek']),
+        (['lol, kek'], ['kek', 'lol']),
+        (['kek, lol'], ['kek', 'lol']),
         (['., .'], ['.', '.']),
         (['., *'], ['.', '*']),
         (['., kek, *, **'], ['.', 'kek', '*', '**']),
         (['., kek , *, **'], ['.', 'kek', '*', '**']),
         (['., kek           , *, **'], ['.', 'kek', '*', '**']),
 
-        (['lol,kek'], ['lol', 'kek']),
+        (['lol,kek'], ['kek', 'lol']),
+        (['kek,lol'], ['kek', 'lol']),
         (['.,.'], ['.', '.']),
         (['.,*'], ['.', '*']),
         (['.,kek,*,**'], ['.', 'kek', '*', '**']),
@@ -488,3 +492,76 @@ def test_hash():
         PossibleCallMatcher('.'): 'lol',
         PossibleCallMatcher('..'): 'kek',
     }[PossibleCallMatcher('.')] == 'lol'
+
+
+def test_from_callable_in_simple_way(transformed):
+    @transformed
+    def some_function(a, b, c): ...
+
+    possibles = PossibleCallMatcher.from_callable(some_function)
+
+    assert len(possibles) == 8
+
+    assert PossibleCallMatcher('., a, b') in possibles
+    assert PossibleCallMatcher('., a, c') in possibles
+    assert PossibleCallMatcher('., b, c') in possibles
+    assert PossibleCallMatcher('.., a') in possibles
+    assert PossibleCallMatcher('.., b') in possibles
+    assert PossibleCallMatcher('.., c') in possibles
+    assert PossibleCallMatcher('...') in possibles
+    assert PossibleCallMatcher('a, b, c') in possibles
+
+    assert PossibleCallMatcher('a, b, c, d') not in possibles
+
+def test_from_callable_empty_case(transformed):
+    @transformed
+    def some_function(): ...
+
+    possibles = PossibleCallMatcher.from_callable(some_function)
+
+    assert len(possibles) == 1
+
+    assert PossibleCallMatcher() in possibles
+
+    assert PossibleCallMatcher('.') not in possibles
+    assert PossibleCallMatcher('a') not in possibles
+
+
+def test_from_callable_without_variables(transformed):
+    @transformed
+    def some_function_1(*, a, b): ...
+
+    @transformed
+    def some_function_2(a, b, /): ...
+
+    assert len(PossibleCallMatcher.from_callable(some_function_1)) == 1
+    assert len(PossibleCallMatcher.from_callable(some_function_2)) == 1
+
+
+def test_from_callable_with_stars(transformed):
+    @transformed
+    def some_function_1(a, b, *args): ...
+
+    @transformed
+    def some_function_2(a, b, **kwargs): ...
+
+    assert len(PossibleCallMatcher.from_callable(some_function_1)) == 4
+
+    assert PossibleCallMatcher('., b, *') in PossibleCallMatcher.from_callable(some_function_1)
+    assert PossibleCallMatcher('., a, *') in PossibleCallMatcher.from_callable(some_function_1)
+    assert PossibleCallMatcher('.., *') in PossibleCallMatcher.from_callable(some_function_1)
+    assert PossibleCallMatcher('a, b, *') in PossibleCallMatcher.from_callable(some_function_1)
+
+    assert len(PossibleCallMatcher.from_callable(some_function_2)) == 4
+
+    assert PossibleCallMatcher('., b, **') in PossibleCallMatcher.from_callable(some_function_2)
+    assert PossibleCallMatcher('., a, **') in PossibleCallMatcher.from_callable(some_function_2)
+    assert PossibleCallMatcher('.., **') in PossibleCallMatcher.from_callable(some_function_2)
+    assert PossibleCallMatcher('a, b, **') in PossibleCallMatcher.from_callable(some_function_2)
+
+
+def test_from_callable_when_callable_is_wrong():
+    assert PossibleCallMatcher.from_callable(next) == SignatureSeriesMatcher()
+
+    with pytest.raises(SignatureNotFoundError, match=match('For some functions, it is not possible to extract the signature, and this is one of them.')):
+        PossibleCallMatcher.from_callable(next, raise_exception=True)

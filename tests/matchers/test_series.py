@@ -125,3 +125,36 @@ def test_hash():
         PossibleCallMatcher('.') + PossibleCallMatcher('..'): 'lol',
         PossibleCallMatcher('.') + PossibleCallMatcher('...'): 'kek',
     }[PossibleCallMatcher('.') + PossibleCallMatcher('..')] == 'lol'
+
+
+def test_len():
+    assert len(SignatureSeriesMatcher()) == 0
+
+    assert len(PossibleCallMatcher('.') + PossibleCallMatcher('.')) == 1
+    assert len(PossibleCallMatcher('.') + PossibleCallMatcher('.') + PossibleCallMatcher('.')) == 1
+    assert len(PossibleCallMatcher('..') + PossibleCallMatcher('..')) == 1
+    assert len(PossibleCallMatcher('a, c') + PossibleCallMatcher('c, a')) == 1
+
+    assert len(PossibleCallMatcher('.') + PossibleCallMatcher('..') + PossibleCallMatcher('...')) == 3
+    assert len(PossibleCallMatcher('.') + PossibleCallMatcher('a') + PossibleCallMatcher('c')) == 3
+    assert len(PossibleCallMatcher('.') + PossibleCallMatcher('..') + PossibleCallMatcher('...') + PossibleCallMatcher('..., *')) == 4
+
+    assert len(PossibleCallMatcher('.') + PossibleCallMatcher('..') + PossibleCallMatcher('..')) == 2
+    assert len(PossibleCallMatcher('.') + PossibleCallMatcher('a') + PossibleCallMatcher('c') + PossibleCallMatcher('c')) == 3
+
+
+def test_contains():
+    assert SignatureSeriesMatcher() in SignatureSeriesMatcher()
+    assert (PossibleCallMatcher('.') + PossibleCallMatcher('..')) in (PossibleCallMatcher('.') + PossibleCallMatcher('..'))
+    assert (PossibleCallMatcher('.') + PossibleCallMatcher('..')) in (PossibleCallMatcher('.') + PossibleCallMatcher('..') + PossibleCallMatcher('...'))
+
+    assert PossibleCallMatcher('.') in SignatureSeriesMatcher(PossibleCallMatcher('.'))
+    assert PossibleCallMatcher('.') in SignatureSeriesMatcher(PossibleCallMatcher('.'), PossibleCallMatcher('..'))
+    assert PossibleCallMatcher('.') in SignatureSeriesMatcher(PossibleCallMatcher('.'), PossibleCallMatcher('a, c'))
+
+    assert PossibleCallMatcher('.') not in SignatureSeriesMatcher()
+
+    assert (PossibleCallMatcher('.') + PossibleCallMatcher('..') + PossibleCallMatcher('...')) not in (PossibleCallMatcher('.') + PossibleCallMatcher('..'))
+
+    assert 1 not in (PossibleCallMatcher('.') + PossibleCallMatcher('..'))
+    assert '.' not in (PossibleCallMatcher('.') + PossibleCallMatcher('..'))
