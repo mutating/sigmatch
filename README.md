@@ -118,3 +118,5 @@ def now_its_suitable(a, b):  # Let me remind you that last time a function with 
 print(expectation.match(now_its_suitable))
 #> True
 ```
+
+You can treat the sum of such objects as a regular collection: iterate through them, find out their number, check for containing.
