@@ -1,4 +1,4 @@
-from typing import Generator, Any, Callable, List
+from typing import Any, Callable, Generator, List
 
 from printo import descript_data_object
 
@@ -49,8 +49,7 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
                 return False
             return len(item & self) == len(item)
 
-        else:
-            return type(self)(item) in self
+        return type(self)(item) in self
 
     def __iter__(self) -> Generator[PossibleCallMatcher, None, None]:
         yield from self.matchers
