@@ -110,6 +110,8 @@ Sometimes the same function can be called differently in different parts of a pr
 expectation = PossibleCallMatcher('...') + PossibleCallMatcher('.., c'),  + PossibleCallMatcher('.., d')
 ```
 
+> ⚠️ The current variation selection algorithm has one known flaw: it ignores the presence of default values for strictly positional function parameters. However, this problem rarely occurs in real code.
+
 The resulting object will be completely identical to a regular object of the expected signature, i.e., it will also have a `match()` method. However, it will check several signatures, and if at least one of them matches your object, it will return `True`, otherwise `False`:
 
 ```python
