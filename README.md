@@ -172,7 +172,7 @@ print(PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_
 #> True
 ```
 
-And finally, the weakest check: sometimes you need to make sure that two different functions have at least one common calling convention. To do this, you can calculate the intersection of signatures using the `&` operator:
+And finally, the weakest check: sometimes you need to make sure that two different functions have at least one common calling way. To do this, you can calculate the intersection of signatures using the `&` operator:
 
 ```python
 def function_1(a, b, d=None):
