@@ -40,3 +40,60 @@ You can also quickly try out this and other packages without having to install u
 
 
 ## Usage
+
+To check the signature of a called object, you first need to «bake» your expectations into a special object. Here's how to do it:
+
+```python
+from sigmatch import PossibleCallMatcher
+
+expectation = PossibleCallMatcher('.., c')
+```
+
+You see, we passed a strange string to the `PossibleCallMatcher` constructor. What does it mean? It is a short description of the expected signature in a special micro-language. Let's learn how to compose short expressions in it! Here are a few rules:
+
+- You list the expected arguments of the function separated by commas, like this: `a, b, c`. The spaces are recommended, but not required
+- You indicate positional arguments using dots, like this: `., ., .`. The points do not necessarily have to be separated by commas, so a completely equivalent expression would be `...`.
+- If you specify a name, it means that the argument will be passed to the function by name (rather than by position). For example, the expression `x, y` means that the function will be called something like this: `function(x=1, y=2)` (not `function(x, y)`!).
+- If you use unpacking when calling a function, use `*` for usual unpacking and `**` for dictionary one.
+- The arguments in the expression must be in the following order: first positional, then nominal, then usual unpacking, then dictionary unpacking. Do not violate this!
+- If the function does not accept any arguments, do not pass anything to the `PossibleCallMatcher` constructor.
+
+Here are some examples of expressions:
+
+- `..` means *«the function will be called with 2 positional arguments»*.
+- `., first, second` means *«the function will be called with 1 positional argument and 2 named arguments: `first` and `second`»*.
+- `., first, second` means *«the function will be called with 1 positional argument and 2 named arguments: `first` and `second`»*.
+- `.., *` means *«the function will be called with 2 positional arguments, and a list can also be unpacked when calling»*, like this: `function(1, 2, *[3, 4, 5])`.
+- `.., first, **` means *«the function will be called with 2 positional arguments, the argument `first` will be passed by name, and a dictionary can be unpacked when calling»*, like this: `function(1, 2, first=3, **{'second': 4, 'third': 5})`.
+
+Well, let's go back to the object we created above and try to apply it to the functions to see if they suit us or not:
+
+```python
+def first_suitable_function(a, b, c):
+    ...
+
+def second_suitable_function(a, b, c=None, d=None):  # This function also suits us, because the argument "d" does not have to be passed.
+    ...
+
+def not_suitable_function(a, b):  # Attention!
+    ...
+
+print(expectation.match(first_suitable_function))
+#> True
+print(expectation.match(second_suitable_function))
+#> True
+print(expectation.match(not_suitable_function))
+#> False
+```
+
+> ⚠️ Some built-in functions, such as [`next`](https://docs.python.org/3/library/functions.html#next), are written in C and therefore cannot be extracted from them. But if you wrote the function yourself and it is in Python, there should be no problem.
+
+As you can see, the same expression can correspond to functions with different signatures. This is because our expressions describe not the signature of the function, but *how it will be called*. Python allows the same function to be called in different ways.
+
+If you want an exception to be raised when the signature does not match expectations, pass the argument `raise_exception=True` when calling the `match()` method:
+
+```python
+expectation.match(not_suitable_function, raise_exception=True)
+#> ...
+#> sigmatch.errors.SignatureMismatchError: The signature of the callable object does not match the expected one.
+```
