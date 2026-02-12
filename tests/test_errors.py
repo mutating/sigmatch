@@ -1,4 +1,9 @@
-from sigmatch import SignatureError, SignatureMismatchError, SignatureNotFoundError, UnsupportedSignatureError
+from sigmatch import (
+    SignatureError,
+    SignatureMismatchError,
+    SignatureNotFoundError,
+    UnsupportedSignatureError,
+)
 
 
 def test_inheritance():
