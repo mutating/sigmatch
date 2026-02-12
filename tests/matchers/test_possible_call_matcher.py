@@ -605,17 +605,29 @@ def test_it_works_with_class_based_callables(transformed):
     assert PossibleCallMatcher().match(LocalCallable)
 
 
-def test_function_in_function():
+def test_function_in_function(transformed):
+    @transformed
     def function_1(a, b): ...
+    @transformed
     def function_2(a, b, c=None): ...
 
     assert PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_2)
 
+    assert PossibleCallMatcher.from_callable(function_2) not in PossibleCallMatcher.from_callable(function_1)
 
-def test_function_in_function_when_second_one_contains_stars():
+
+def test_function_in_function_when_second_one_contains_stars(transformed):
+    @transformed
     def function_1(a, b): ...
+    @transformed
     def function_2(a, b, c=None, *args): ...
+    @transformed
     def function_3(a, b, c=None, **kwargs): ...
 
     assert PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_2)
     assert PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_3)
+
+    assert PossibleCallMatcher.from_callable(function_2) not in PossibleCallMatcher.from_callable(function_1)
+    assert PossibleCallMatcher.from_callable(function_3) not in PossibleCallMatcher.from_callable(function_1)
+    assert PossibleCallMatcher.from_callable(function_2) not in PossibleCallMatcher.from_callable(function_3)
+    assert PossibleCallMatcher.from_callable(function_3) not in PossibleCallMatcher.from_callable(function_2)
