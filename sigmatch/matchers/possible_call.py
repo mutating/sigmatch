@@ -247,17 +247,19 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
 
         for variation in dots_variations:
             for exclude_this_names in cls._make_powerset_of_excludes(baskets.with_defaults):
-                all_call_arguments = []
-                all_call_arguments.append('.' * (len(baskets.only_posititional) + variation.count('.')))
-                all_call_arguments.extend([x for x in variation if x != '.' and x not in exclude_this_names])
-                all_call_arguments.extend([x for x in baskets.only_named if x not in exclude_this_names])
+                for add_args in [False] + [x for x in [baskets.is_args] if x]:
+                    for add_kwargs in [False] + [x for x in [baskets.is_kwargs] if x]:
+                        all_call_arguments = []
+                        all_call_arguments.append('.' * (len(baskets.only_posititional) + variation.count('.')))
+                        all_call_arguments.extend([x for x in variation if x != '.' and x not in exclude_this_names])
+                        all_call_arguments.extend([x for x in baskets.only_named if x not in exclude_this_names])
 
-                if baskets.is_args:
-                    all_call_arguments.append('*')
-                if baskets.is_kwargs:
-                    all_call_arguments.append('**')
+                        if add_args:
+                            all_call_arguments.append('*')
+                        if add_kwargs:
+                            all_call_arguments.append('**')
 
-                matchers.append(cls(*all_call_arguments))
+                        matchers.append(cls(*all_call_arguments))
 
         return SignatureSeriesMatcher(*matchers)
 

@@ -556,19 +556,29 @@ def test_from_callable_with_stars(transformed):
     @transformed
     def some_function_2(a, b, **kwargs): ...
 
-    assert len(PossibleCallMatcher.from_callable(some_function_1)) == 4
+    assert len(PossibleCallMatcher.from_callable(some_function_1)) == 8
 
     assert PossibleCallMatcher('., b, *') in PossibleCallMatcher.from_callable(some_function_1)
     assert PossibleCallMatcher('., a, *') in PossibleCallMatcher.from_callable(some_function_1)
     assert PossibleCallMatcher('.., *') in PossibleCallMatcher.from_callable(some_function_1)
     assert PossibleCallMatcher('a, b, *') in PossibleCallMatcher.from_callable(some_function_1)
 
-    assert len(PossibleCallMatcher.from_callable(some_function_2)) == 4
+    assert PossibleCallMatcher('., b') in PossibleCallMatcher.from_callable(some_function_1)
+    assert PossibleCallMatcher('., a') in PossibleCallMatcher.from_callable(some_function_1)
+    assert PossibleCallMatcher('..') in PossibleCallMatcher.from_callable(some_function_1)
+    assert PossibleCallMatcher('a, b') in PossibleCallMatcher.from_callable(some_function_1)
+
+    assert len(PossibleCallMatcher.from_callable(some_function_2)) == 8
 
     assert PossibleCallMatcher('., b, **') in PossibleCallMatcher.from_callable(some_function_2)
     assert PossibleCallMatcher('., a, **') in PossibleCallMatcher.from_callable(some_function_2)
     assert PossibleCallMatcher('.., **') in PossibleCallMatcher.from_callable(some_function_2)
     assert PossibleCallMatcher('a, b, **') in PossibleCallMatcher.from_callable(some_function_2)
+
+    assert PossibleCallMatcher('., b') in PossibleCallMatcher.from_callable(some_function_2)
+    assert PossibleCallMatcher('., a') in PossibleCallMatcher.from_callable(some_function_2)
+    assert PossibleCallMatcher('..') in PossibleCallMatcher.from_callable(some_function_2)
+    assert PossibleCallMatcher('a, b') in PossibleCallMatcher.from_callable(some_function_2)
 
 
 def test_from_callable_when_callable_is_wrong():
@@ -603,3 +613,17 @@ def test_function_in_function():
         ...
 
     assert PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_2)
+
+
+def test_function_in_function_when_second_one_contains_stars():
+    def function_1(a, b):
+        ...
+
+    def function_2(a, b, c=None, *args):
+        ...
+
+    def function_3(a, b, c=None, **kwargs):
+        ...
+
+    assert PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_2)
+    assert PossibleCallMatcher.from_callable(function_1) in PossibleCallMatcher.from_callable(function_3)
