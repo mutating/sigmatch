@@ -26,6 +26,7 @@ This small library allows you to quickly check whether any called object matches
 
 - [**Installation**](#installation)
 - [**Usage**](#usage)
+- [**Combining different expectations**](#combining-different-expectations)
 
 
 ## Installation
@@ -100,3 +101,20 @@ expectation.match(not_suitable_function, raise_exception=True)
 In this case, an exception will also be raised if the signature cannot be extracted from the passed object.
 
 
+## Combining different expectations
+
+Sometimes the same function can be called differently in different parts of a program, and that's perfectly normal. But how can you express this situation concisely in terms of `sigmatch`? Just list several expectation objects using plus signs:
+
+```python
+expectation = PossibleCallMatcher('...') + PossibleCallMatcher('.., c'),  + PossibleCallMatcher('.., d')
+```
+
+The resulting object will be completely identical to a regular object of the expected signature, i.e., it will also have a `match()` method. However, it will check several signatures, and if at least one of them matches your object, it will return `True`, otherwise `False`:
+
+```python
+def now_its_suitable(a, b):  # Let me remind you that last time a function with the same signature didn't suit us, but now it does!
+    ...
+    
+print(expectation.match(now_its_suitable))
+# True
+```
