@@ -215,7 +215,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
             else:  # pragma: no cover
                 raise IncorrectArgumentsOrderError(f'What does it mean, this point in expected signature: "{item}"?')
 
-    def _get_signature_string(self):
+    def _get_signature_string(self) -> str:
         positional_args = ''.join(['.' for x in range(self.number_of_position_args)])
         named_args = ', '.join(sorted([x for x in self.expected_signature if x.isidentifier()]))
         star = '*' if self.is_args else ''
@@ -224,7 +224,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         return ', '.join([x for x in (positional_args, named_args, star, double_star) if x])
 
     @classmethod
-    def from_callable(cls, function: Callable[..., Any], raise_exception: bool = False) -> 'SignatureSeriesMatcher':  # noqa: F821
+    def from_callable(cls, function: Callable[..., Any], raise_exception: bool = False) -> 'SignatureSeriesMatcher':  # type: ignore[name-defined] # noqa: F821
         from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
 
         try:
@@ -252,7 +252,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         return SignatureSeriesMatcher(*matchers)
 
     @classmethod
-    def _produce_combinations_with_dots(cls, iterable, index) -> Generator[List[str], List[str], None]:
+    def _produce_combinations_with_dots(cls, iterable: List[str], index: int) -> Generator[List[str], List[str], None]:
         if index == len(iterable):
             yield []
 

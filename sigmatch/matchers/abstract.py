@@ -8,7 +8,7 @@ from sigmatch.errors import (
 
 
 class AbstractSignatureMatcher(ABC):
-    def __add__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':  # noqa: F821
+    def __add__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':  # type: ignore[name-defined] # noqa: F821
         from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
 
         matchers = []
@@ -17,7 +17,7 @@ class AbstractSignatureMatcher(ABC):
             if isinstance(matcher, SignatureSeriesMatcher):
                 matchers.extend(matcher.matchers)
             else:
-                matchers.append(matcher)
+                matchers.append(matcher)  # type: ignore[arg-type]
 
         return SignatureSeriesMatcher(*matchers)
 
@@ -29,10 +29,10 @@ class AbstractSignatureMatcher(ABC):
     def __hash__(self) -> int:
         ...  # pragma: no cover
 
-    def __and__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':  # noqa: F821
+    def __and__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':  # type: ignore[name-defined] # noqa: F821
         from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
 
-        both: Tuple[SignatureSeriesMatcher, SignatureSeriesMatcher] = tuple([x if isinstance(x, SignatureSeriesMatcher) else SignatureSeriesMatcher(x) for x in (self, other)])
+        both: Tuple[SignatureSeriesMatcher, SignatureSeriesMatcher] = tuple([x if isinstance(x, SignatureSeriesMatcher) else SignatureSeriesMatcher(x) for x in (self, other)])  # type: ignore[assignment]
 
         intersection = sorted(set(both[0].matchers) & set(both[1].matchers), key=lambda x: x._get_signature_string())
 

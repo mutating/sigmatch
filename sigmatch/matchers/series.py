@@ -15,12 +15,12 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
             if isinstance(matcher, type(self)):
                 self.matchers.extend(matcher.matchers)
             else:
-                self.matchers.append(matcher)
+                self.matchers.append(matcher)  # type: ignore[arg-type]
 
         self.matchers = sorted(set(self.matchers), key=lambda x: x._get_signature_string())
 
     def __repr__(self) -> str:
-        return descript_data_object(type(self).__name__, self.matchers, {})
+        return descript_data_object(type(self).__name__, tuple(self.matchers), {})
 
     def __bool__(self) -> bool:
         return bool(self.matchers)
