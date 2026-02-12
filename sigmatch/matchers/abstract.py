@@ -8,7 +8,7 @@ from sigmatch.errors import (
 
 
 class AbstractSignatureMatcher(ABC):
-    def __add__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':
+    def __add__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':  # noqa: F821
         from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
 
         matchers = []
@@ -29,7 +29,7 @@ class AbstractSignatureMatcher(ABC):
     def __hash__(self) -> int:
         ...  # pragma: no cover
 
-    def __and__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':
+    def __and__(self, other: 'AbstractSignatureMatcher') -> 'SignatureSeriesMatcher':  # noqa: F821
         from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
 
         both: Tuple[SignatureSeriesMatcher, SignatureSeriesMatcher] = tuple([x if isinstance(x, SignatureSeriesMatcher) else SignatureSeriesMatcher(x) for x in (self, other)])

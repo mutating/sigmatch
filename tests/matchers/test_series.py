@@ -38,7 +38,7 @@ def test_not_raise_exception_if_dismatch_and_flag_is_false(options):
     assert not (PossibleCallMatcher() + PossibleCallMatcher('..')).match(lambda x: None, **options)  # noqa: ARG005
 
 
-def test_class_with_init_as_callable(matcher_class):
+def test_class_with_init_as_callable():
     class Kek:
         def __init__(self, a, b, c):
             pass
@@ -47,7 +47,7 @@ def test_class_with_init_as_callable(matcher_class):
     assert not SignatureSeriesMatcher(PossibleCallMatcher()).match(Kek)
 
 
-def test_class_with_call_dunder_object_is_callable(matcher_class, transformed):
+def test_class_with_call_dunder_object_is_callable(transformed):
     class Kek:
         @transformed
         def __call__(self, a, b, c):
@@ -73,14 +73,14 @@ def test_repr():
 
 
 def test_throughput_check():
-    assert (PossibleCallMatcher() + PossibleCallMatcher('..')).match(lambda x, y: None)
+    assert (PossibleCallMatcher() + PossibleCallMatcher('..')).match(lambda x, y: None)  # noqa: ARG005
 
-    assert not (PossibleCallMatcher() + PossibleCallMatcher('...')).match(lambda x, y: None)
+    assert not (PossibleCallMatcher() + PossibleCallMatcher('...')).match(lambda x, y: None)  # noqa: ARG005
     assert not (PossibleCallMatcher() + PossibleCallMatcher('...')).match(next)
 
 
     with pytest.raises(SignatureMismatchError, match=match('The signature failed one of the checks.')):
-        (PossibleCallMatcher() + PossibleCallMatcher('...')).match(lambda x, y: None, raise_exception=True)
+        (PossibleCallMatcher() + PossibleCallMatcher('...')).match(lambda x, y: None, raise_exception=True)  # noqa: ARG005
 
 
 @pytest.mark.parametrize(
