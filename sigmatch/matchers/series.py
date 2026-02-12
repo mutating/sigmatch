@@ -28,6 +28,9 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
     def __hash__(self) -> int:
         return hash(tuple(self.matchers))
 
+    def __len__(self) -> int:
+        return len(self.matchers)
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AbstractSignatureMatcher):
             return False
@@ -36,6 +39,18 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
             other = type(self)(other)
 
         return set(self.matchers) == set(other.matchers)
+
+    def __contains__(self, item: AbstractSignatureMatcher) -> bool:
+        if not isinstance(item, AbstractSignatureMatcher):
+            return False
+
+        if isinstance(item, type(self)):
+            if len(item) > len(self):
+                return False
+            return len(item & self) == len(item)
+
+        else:
+            return type(self)(item) in self
 
     def _match(self, function: Callable[..., Any], raise_exception: bool = False) -> bool:
         if not self.matchers:
