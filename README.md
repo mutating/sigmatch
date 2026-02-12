@@ -27,6 +27,7 @@ This small library allows you to quickly check whether any called object matches
 - [**Installation**](#installation)
 - [**Usage**](#usage)
 - [**Combining different expectations**](#combining-different-expectations)
+- [**Comparing functions with each other**](#comparing-functions-with-each-other)
 
 
 ## Installation
@@ -120,3 +121,6 @@ print(expectation.match(now_its_suitable))
 ```
 
 You can treat the sum of such objects as a regular collection: iterate through them, find out their number, check for containing.
+
+
+## Comparing functions with each other
