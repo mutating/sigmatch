@@ -2,6 +2,9 @@ from sigmatch.errors import (
     IncorrectArgumentsOrderError as IncorrectArgumentsOrderError,
 )
 from sigmatch.errors import (
+    SignatureError as SignatureError,
+)
+from sigmatch.errors import (
     SignatureMismatchError as SignatureMismatchError,
 )
 from sigmatch.errors import (
