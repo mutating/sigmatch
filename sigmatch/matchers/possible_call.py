@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from itertools import chain, combinations
 from inspect import Parameter, Signature, signature
+from itertools import chain, combinations
 from typing import Any, Callable, Generator, List, Optional, Tuple, cast
 
 from printo import descript_data_object
@@ -275,7 +275,5 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
                     yield [element, *tail]
 
     @staticmethod
-    def _make_powerset_of_excludes(some_names: List[str]):
-        return chain.from_iterable(
-            combinations(some_names, batch_size) for batch_size in range(len(some_names) + 1)
-        )
+    def _make_powerset_of_excludes(some_names: List[str]) -> List[Tuple[str, ...]]:
+        return list(chain.from_iterable(combinations(some_names, batch_size) for batch_size in range(len(some_names) + 1)))
