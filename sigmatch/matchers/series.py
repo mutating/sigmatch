@@ -65,7 +65,6 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
         except (SignatureNotFoundError, SignatureMismatchError) as e:
             if isinstance(e, SignatureNotFoundError) and raise_exception:
                 raise
-            if raise_exception:
-                raise SignatureMismatchError('The signature failed one of the checks.') from e
+            raise SignatureMismatchError('The signature failed one of the checks.') from e
 
         return result
