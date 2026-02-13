@@ -43,7 +43,7 @@ You can also quickly try out this and other packages without having to install u
 
 ## Usage
 
-To check the signature of a called object, you first need to «bake» your expectations into a special object. Here's how to do it:
+To check the signature of a callable, you first need to «bake» your expectations into a special object. Here's how to do it:
 
 ```python
 from sigmatch import PossibleCallMatcher
