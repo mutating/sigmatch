@@ -48,5 +48,5 @@ lint.select = ["ERA001", "YTT", "ASYNC", "BLE", "B", "A", "COM", "INP", "PIE", "
 format.quote-style = "single"
 
 [project.urls]
-'Source' = 'https://github.com/pomponchik/sigmatch'
-'Tracker' = 'https://github.com/pomponchik/sigmatch/issues'
+'Source' = 'https://github.com/mutating/sigmatch'
+'Tracker' = 'https://github.com/mutating/sigmatch/issues'
