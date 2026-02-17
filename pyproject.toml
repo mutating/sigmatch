@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sigmatch"
-version = "0.0.6"
+version = "0.0.7"
 authors = [
   { name="Evgeniy Blinov", email="zheni-b@yandex.ru" },
 ]
@@ -21,7 +21,6 @@ classifiers = [
     'Operating System :: POSIX',
     'Operating System :: POSIX :: Linux',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
@@ -49,5 +48,5 @@ lint.select = ["ERA001", "YTT", "ASYNC", "BLE", "B", "A", "COM", "INP", "PIE", "
 format.quote-style = "single"
 
 [project.urls]
-'Source' = 'https://github.com/pomponchik/sigmatch'
-'Tracker' = 'https://github.com/pomponchik/sigmatch/issues'
+'Source' = 'https://github.com/mutating/sigmatch'
+'Tracker' = 'https://github.com/mutating/sigmatch/issues'
