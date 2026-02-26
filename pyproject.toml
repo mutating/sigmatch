@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sigmatch"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
   { name="Evgeniy Blinov", email="zheni-b@yandex.ru" },
 ]
@@ -12,7 +12,7 @@ description = 'A quick way to verify function signatures in Python'
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    'printo>=0.0.10'
+    'printo>=0.0.14',
 ]
 classifiers = [
     "Operating System :: OS Independent",
