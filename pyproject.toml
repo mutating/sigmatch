@@ -12,7 +12,7 @@ description = 'A quick way to verify function signatures in Python'
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    'printo>=0.0.10'
+    'printo>=0.0.14',
 ]
 classifiers = [
     "Operating System :: OS Independent",
