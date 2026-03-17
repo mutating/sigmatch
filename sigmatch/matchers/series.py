@@ -1,6 +1,6 @@
 from typing import Any, Callable, Generator, List
 
-from printo import descript_data_object
+from printo import describe_data_object
 
 from sigmatch import PossibleCallMatcher
 from sigmatch.errors import SignatureMismatchError, SignatureNotFoundError
@@ -20,7 +20,7 @@ class SignatureSeriesMatcher(AbstractSignatureMatcher):
         self.matchers = sorted(set(self.matchers), key=lambda x: x._get_signature_string())
 
     def __repr__(self) -> str:
-        return descript_data_object(type(self).__name__, self.matchers, {})
+        return describe_data_object(type(self).__name__, self.matchers, {})
 
     def __bool__(self) -> bool:
         return bool(self.matchers)

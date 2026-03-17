@@ -3,7 +3,7 @@ from inspect import Parameter, Signature, signature
 from itertools import chain, combinations
 from typing import Any, Callable, Generator, List, Optional, Tuple, cast
 
-from printo import descript_data_object
+from printo import describe_data_object
 
 from sigmatch.errors import (
     IncorrectArgumentsOrderError,
@@ -47,7 +47,7 @@ class PossibleCallMatcher(AbstractSignatureMatcher):
         self.is_wrong = False
 
     def __repr__(self) -> str:
-        return descript_data_object(type(self).__name__, (self._get_signature_string(),), {}, filters={0: lambda x: x != ''})
+        return describe_data_object(type(self).__name__, (self._get_signature_string(),), {}, filters={0: lambda x: x != ''})
 
     def __eq__(self, other: Any) -> bool:
         from sigmatch.matchers.series import SignatureSeriesMatcher  # noqa: PLC0415
